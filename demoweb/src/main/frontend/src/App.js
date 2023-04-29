@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
-import RegisterPage from "pages/RegisterPage/RegisterPage";
-
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import HomePage from "./pages/HomePage/HomePage";
 function App() {
   // const [hello, setHello] = useState("");
 
@@ -17,13 +17,14 @@ function App() {
 
   // return <div>백엔드에서 가져온 데이터입니다 : {hello}</div>;
   return (
-    <BrowserRouter>
-      <div>
+    <div className="App">
+      <BrowserRouter>
         <Routes>
-          <Route exact path="/register" component={RegisterPage} />
+          <Route path="/*" element={<HomePage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Routes>
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </div>
   );
 }
 
