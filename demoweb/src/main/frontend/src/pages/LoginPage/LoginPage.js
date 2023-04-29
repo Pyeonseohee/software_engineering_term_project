@@ -1,16 +1,29 @@
 //client/src/pages/Login.js
 import React, { useState } from "react";
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+//예시
+// const [hello, setHello] = useState("");
 
-const Login = () => {
-  const [Email, setEmail] = useState("");
+// useEffect(() => {
+//   axios
+//     .get("/api/hello")
+//     .then((response) => setHello(response.data))
+//     .catch((error) => console.log(error));
+// }, []);
+
+// return <div>백엔드에서 가져온 데이터입니다 : {hello}</div>;
+
+const url = "http://localhost:8080/api/login";
+function LoginPage(props) {
+  const [Id, setId] = useState("");
   const [Password, setPassword] = useState("");
 
-  const onEmailHandler = (event) => {
-    setEmail(event.currentTarget.value);
+  const onIdHandler = (event) => {
+    setId(event.currentTarget.value);
   };
 
   const onPasswordHandler = (event) => {
@@ -19,6 +32,24 @@ const Login = () => {
 
   const onSubmitHandler = (event) => {
     event.preventDefault();
+  };
+
+  const onClickLogin = (event) => {
+    console.log("click login");
+    const data = {
+      userId: Id,
+      userPw: Password,
+    };
+    console.log(JSON.stringify(data));
+
+    axios
+      .post(url, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -33,8 +64,8 @@ const Login = () => {
             style={{ display: "flex", flexDirection: "column" }}
             onSubmit={onSubmitHandler}
           >
-            <lable>Email</lable>
-            <input type="email" value={Email} onChange={onEmailHandler} />
+            <lable>ID</lable>
+            <input type="text" value={Id} onChange={onIdHandler} />
             <br />
             <lable>Password</lable>
             <input
@@ -44,12 +75,14 @@ const Login = () => {
             />
             <br />
             <a href="../register">회원이 아니십니까?</a>
-            <button type="submit">로그인</button>
+            <button type="submit" onClick={onClickLogin}>
+              로그인
+            </button>
           </form>
         </Card>
       </Col>
       <Col xs={1} md={3}></Col>
     </Row>
   );
-};
-export default Login;
+}
+export default LoginPage;

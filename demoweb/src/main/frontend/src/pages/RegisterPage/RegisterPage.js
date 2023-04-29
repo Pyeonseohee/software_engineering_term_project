@@ -2,13 +2,13 @@ import React, { useState } from "react";
 
 function RegisterPage(props) {
   //email과 pw를 위한 state 만들기
-  const [Email, setEmail] = useState("");
+  const [Id, setId] = useState("");
   const [Password, setPassword] = useState("");
   const [Name, setName] = useState("");
   const [ConfirmPassword, setConfirmPassword] = useState("");
 
-  const onEmailHandler = (event) => {
-    setEmail(event.currentTarget.value);
+  const onIdHandler = (event) => {
+    setId(event.currentTarget.value);
   };
 
   const onPasswordHandler = (event) => {
@@ -41,8 +41,8 @@ function RegisterPage(props) {
         style={{ display: "flex", flexDirection: "column" }}
         onSubmit={onSubmitHandler}
       >
-        <lable>Email</lable>
-        <input type="email" value={Email} onChange={onEmailHandler} />
+        <lable>ID</lable>
+        <input type="text" value={Id} onChange={onIdHandler} />
 
         <lable>Name</lable>
         <input type="text" value={Name} onChange={onNameHandler} />

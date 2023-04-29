@@ -65,3 +65,11 @@ task copyReactBuildFiles(type: Copy) {
 	from "$frontendDir/build"
 	into "$projectDir/src/main/resources/static"
 }
+
+task runReactServer(type: NpmTask) {
+    workingDir = file("frontend");
+    args = ["run", "start"]
+}
+bootRun.doFirst {
+    runReactServer
+}
