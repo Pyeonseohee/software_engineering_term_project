@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
-import HomePage from "./pages/HomePage/HomePage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 function App() {
   // const [hello, setHello] = useState("");
 
@@ -20,7 +20,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/*" element={<HomePage />} />
+          <Route path="/*" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </BrowserRouter>
