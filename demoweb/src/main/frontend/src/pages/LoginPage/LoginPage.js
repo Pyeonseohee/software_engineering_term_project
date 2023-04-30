@@ -17,13 +17,14 @@ import Col from "react-bootstrap/Col";
 
 // return <div>백엔드에서 가져온 데이터입니다 : {hello}</div>;
 
-const url = "http://localhost:8080/api/login";
+const url = "http://localhost:8080/api/Login";
+
 function LoginPage(props) {
-  const [Id, setId] = useState("");
+  const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
 
-  const onIdHandler = (event) => {
-    setId(event.currentTarget.value);
+  const onEmailHandler = (event) => {
+    setEmail(event.currentTarget.value);
   };
 
   const onPasswordHandler = (event) => {
@@ -35,10 +36,11 @@ function LoginPage(props) {
   };
 
   const onClickLogin = (event) => {
+
     console.log("click login");
     const data = {
-      userId: Id,
-      userPw: Password,
+      email: Email,
+      pw: Password,
     };
     console.log(JSON.stringify(data));
 
@@ -64,8 +66,8 @@ function LoginPage(props) {
             style={{ display: "flex", flexDirection: "column" }}
             onSubmit={onSubmitHandler}
           >
-            <lable>ID</lable>
-            <input type="text" value={Id} onChange={onIdHandler} />
+            <lable>Email</lable>
+            <input type="Email" value={Email} onChange={onEmailHandler} />
             <br />
             <lable>Password</lable>
             <input
