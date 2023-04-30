@@ -17,7 +17,7 @@ import Col from "react-bootstrap/Col";
 
 // return <div>백엔드에서 가져온 데이터입니다 : {hello}</div>;
 
-const url = "http://localhost:8080/api/Login";
+const url = "http://localhost:8080/api/login";
 
 function LoginPage(props) {
   const [Email, setEmail] = useState("");
