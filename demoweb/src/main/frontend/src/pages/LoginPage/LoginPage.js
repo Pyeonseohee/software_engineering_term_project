@@ -36,7 +36,6 @@ function LoginPage(props) {
   };
 
   const onClickLogin = (event) => {
-
     console.log("click login");
     const data = {
       email: Email,
@@ -76,7 +75,7 @@ function LoginPage(props) {
               onChange={onPasswordHandler}
             />
             <br />
-            <a href="../register">회원이 아니십니까?</a>
+            <a href="http://localhost:3000/register">회원이 아니십니까?</a>
             <button type="submit" onClick={onClickLogin}>
               로그인
             </button>
