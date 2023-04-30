@@ -3,6 +3,7 @@ package com.team19.demoweb.Controller;
 import com.team19.demoweb.entity.UserEntity;
 import com.team19.demoweb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,9 +25,9 @@ public class UserController {
     }
     //POST로 유저 추가
     @PostMapping ("/api/Login")
-    public void put(@RequestBody Map<String, Object> param){
+    public UserEntity put(@RequestBody Map<String, Object> param){
         System.out.println(param);
-        System.out.println(param.get("userPw"));
-
+        System.out.println(param.get("pw"));
+        return userRepository.save(new UserEntity((String)param.get("email"), (String)param.get("pw")));
     }
 }

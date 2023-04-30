@@ -11,10 +11,9 @@ import lombok.Setter;
 @Getter
 @Builder
 @NoArgsConstructor
-@Table(name = "testDB") // database에 해당 이름의 테이블 생성
+@Table(name = "user") // database에 해당 이름의 테이블 생성
 public class UserEntity { // table 역할
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
     private String id;
 
     @Column
