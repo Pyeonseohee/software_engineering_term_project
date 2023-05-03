@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "user") // database에 해당 이름의 테이블 생성
 public class UserEntity { // table 역할
-    @Id
+    @Id // primary key
     private String id;
 
     @Column

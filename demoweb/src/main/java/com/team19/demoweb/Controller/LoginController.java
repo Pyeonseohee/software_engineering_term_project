@@ -11,10 +11,9 @@ import java.util.Map;
 
 @Controller
 @RestController
-@RequiredArgsConstructor
 public class LoginController {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     
     public LoginController(UserRepository userRepository){
         this.userRepository = userRepository;
@@ -22,7 +21,7 @@ public class LoginController {
     //POST로 유저 추가
     @PostMapping ("/api/login")
     public UserEntity put(@RequestBody Map<String, Object> param){
-        //System.out.println(param);
+        System.out.println(param);
         return userRepository.save(new UserEntity((String)param.get("email"), (String)param.get("pw")));
     }
 }

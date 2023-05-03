@@ -5,17 +5,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-//예시
-// const [hello, setHello] = useState("");
-
-// useEffect(() => {
-//   axios
-//     .get("/api/hello")
-//     .then((response) => setHello(response.data))
-//     .catch((error) => console.log(error));
-// }, []);
-
-// return <div>백엔드에서 가져온 데이터입니다 : {hello}</div>;
 
 const url = "http://localhost:8080/api/login";
 
@@ -47,10 +36,13 @@ function LoginPage(props) {
       .post(url, JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
       })
-      .then((res) => {})
+      .then((res) => {
+        // 어떻게 해라.
+      })
       .catch((error) => {
         console.log(error);
       });
+    console.log("test");
   };
 
   return (
