@@ -4,6 +4,8 @@ import React, { useEffect } from 'react';
 
 const { kakao } = window;
 
+let infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
 const MapPage = () => {
 
     useEffect(() => {
