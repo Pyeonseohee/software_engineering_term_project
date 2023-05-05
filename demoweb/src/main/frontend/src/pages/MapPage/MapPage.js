@@ -16,7 +16,7 @@ const MapPage = () => {
 		};
         const map = new kakao.maps.Map(container, options);
     
-    	const ps = new kakao.maps.services.Places(); 
+    	const {ps} = new kakao.maps.services.Places() || undefined; 
 
         ps.keywordSearch('입력 값', placesSearchCB); 
 
@@ -31,7 +31,7 @@ const MapPage = () => {
                 }       
 
                 map.setBounds(bounds);
-            } 
+            }
         }
 
         function displayMarker(place) {
