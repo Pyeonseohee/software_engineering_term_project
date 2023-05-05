@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-
+import "./button.css";
 const url = "http://localhost:8080/api/login";
 
 function LoginPage(props) {
@@ -46,36 +46,43 @@ function LoginPage(props) {
   };
 
   return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: "100vh",
+      }}
+    >
     <Row>
-      <Col xs={1} md={3}></Col>
-      <Col xs={10} md={6}>
+      <h2>Cafe Regulation System</h2>
         <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
-          <h2>Welcome!</h2>
-          <h5>Cafe regulation System</h5>
           <br />
           <form
             style={{ display: "flex", flexDirection: "column" }}
             onSubmit={onSubmitHandler}
           >
-            <lable>Email</lable>
+            <lable>이메일</lable>
             <input type="Email" value={Email} onChange={onEmailHandler} />
             <br />
-            <lable>Password</lable>
+            <lable>비밀번호</lable>
             <input
               type="Password"
               value={Password}
               onChange={onPasswordHandler}
             />
             <br />
-            <a href="http://localhost:3000/register">회원이 아니십니까?</a>
-            <button type="submit" onClick={onClickLogin}>
+            <pre>
+            <a href="http://localhost:3000/register">회원가입</a>  <a href="http://localhost:3000/findPwd">비밀번호 찾기</a>
+            </pre>
+            <button className="button" type="submit" onClick={onClickLogin}>
               로그인
             </button>
           </form>
         </Card>
-      </Col>
-      <Col xs={1} md={3}></Col>
     </Row>
+    </div>
   );
 }
 export default LoginPage;
