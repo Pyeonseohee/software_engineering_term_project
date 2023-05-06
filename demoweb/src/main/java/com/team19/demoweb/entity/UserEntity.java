@@ -9,17 +9,26 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-@Builder
 @NoArgsConstructor
 @Table(name = "user") // database에 해당 이름의 테이블 생성
 public class UserEntity { // table 역할
     @Id // primary key
-    private String id;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name="user_id")
+    private String userid;
     @Column
     private String password;
-    public UserEntity (String id, String password){
-        this.id = id;
+    @Column
+    private String name;
+    @Column(name = "store_id")
+    private String store;
+    
+    @Builder
+    public UserEntity(String userid, String password, String name, String store) {
+        this.userid = userid;
         this.password = password;
+        this.name = name;
+        this.store = store;
     }
 }
