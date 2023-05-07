@@ -16,18 +16,18 @@ public class UserEntity { // table 역할
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name="user_id")
-    private String userid;
-    @Column
-    private String password;
+    private String email;
+    @Column(name="password")
+    private String pw;
     @Column
     private String name;
     @Column(name = "store_id")
     private String store;
     
     @Builder
-    public UserEntity(String userid, String password, String name, String store) {
-        this.userid = userid;
-        this.password = password;
+    public UserEntity(String email, String pw, String name, String store) {
+        this.email = email;
+        this.pw = pw;
         this.name = name;
         this.store = store;
     }
