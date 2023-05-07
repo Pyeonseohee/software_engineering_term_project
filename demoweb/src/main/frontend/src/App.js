@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MapPage from "./pages/MapPage/MapPage";
+import FindPwdPage from "./pages/FindPwdPage/FindPwdPage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/*" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/findPwd" element={<FindPwdPage />} />
         </Routes>
       </BrowserRouter>
     </div>
