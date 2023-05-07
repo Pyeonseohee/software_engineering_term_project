@@ -2,13 +2,9 @@ package com.team19.demoweb.Controller;
 
 import com.team19.demoweb.entity.UserEntity;
 import com.team19.demoweb.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin("http://localhost:3000")
@@ -21,8 +17,6 @@ public class LoginController {
         this.userRepository = userRepository;
     }
     
-    @PersistenceContext
-    private EntityManager em;
     
     @GetMapping("/api/login")
     public boolean login(@RequestBody UserEntity user){
@@ -47,7 +41,8 @@ public class LoginController {
     }
     @Transactional
     @DeleteMapping("/api/exit")
-    public void exit(@RequestBody UserEntity user) {
-        userRepository.deleteByEmail(user.getEmail());
+    public boolean exit(@RequestBody UserEntity user) {
+        if(userRepository.deleteByEmail(user.getEmail()).isEmpty()) return false;
+        return true;
     }
 }

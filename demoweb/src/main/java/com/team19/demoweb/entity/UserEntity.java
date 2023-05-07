@@ -13,8 +13,6 @@ import lombok.Setter;
 @Table(name = "user") // database에 해당 이름의 테이블 생성
 public class UserEntity { // table 역할
     @Id // primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name="user_id")
     private String email;
     @Column(name="password")
