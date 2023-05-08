@@ -24,15 +24,12 @@ function LoginPage(props) {
   };
 
   const onClickLogin = (event) => {
+    // const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+    // const original = bytes.toString(CryptoJS.enc.Utf8);
     console.log("click login");
-    const data = {
-      email: Email,
-      pw: Password,
-    };
-    console.log(JSON.stringify(data));
 
     axios
-      .post(url, JSON.stringify(data), {
+      .get(url, {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
@@ -55,7 +52,7 @@ function LoginPage(props) {
       }}
     >
       <Row>
-        <h2>Cafe Regulation System</h2>
+        <h2>로그인</h2>
         <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
           <br />
           <form
@@ -63,7 +60,7 @@ function LoginPage(props) {
             onSubmit={onSubmitHandler}
           >
             <lable>이메일</lable>
-            <input type="Email" value={Email} onChange={onEmailHandler} />
+            <input type="text" value={Email} onChange={onEmailHandler} />
             <br />
             <lable>비밀번호</lable>
             <input

@@ -86,7 +86,7 @@ function RegisterPage(props) {
       }}
     >
       <Row>
-        <h2>Cafe Regulation System</h2>
+        <h2>회원가입</h2>
         <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
           <br />
           <form
