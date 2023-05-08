@@ -4,7 +4,6 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import "./button.css";
 const url = "http://localhost:8080/api/login";
 
@@ -25,19 +24,16 @@ function LoginPage(props) {
   };
 
   const onClickLogin = (event) => {
+    // const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+    // const original = bytes.toString(CryptoJS.enc.Utf8);
     console.log("click login");
-    const data = {
-      email: Email,
-      pw: Password,
-    };
-    console.log(JSON.stringify(data));
 
     axios
-      .post(url, JSON.stringify(data), {
+      .get(url, {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        // 어떻게 해라.
+        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -55,8 +51,8 @@ function LoginPage(props) {
         height: "100vh",
       }}
     >
-    <Row>
-      <h2>Cafe Regulation System</h2>
+      <Row>
+        <h2>로그인</h2>
         <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
           <br />
           <form
@@ -64,7 +60,7 @@ function LoginPage(props) {
             onSubmit={onSubmitHandler}
           >
             <lable>이메일</lable>
-            <input type="Email" value={Email} onChange={onEmailHandler} />
+            <input type="text" value={Email} onChange={onEmailHandler} />
             <br />
             <lable>비밀번호</lable>
             <input
@@ -74,14 +70,15 @@ function LoginPage(props) {
             />
             <br />
             <pre>
-            <a href="http://localhost:3000/register">회원가입</a>  <a href="http://localhost:3000/findPwd">비밀번호 찾기</a>
+              <a href="http://localhost:3000/register">회원가입</a>{" "}
+              <a href="http://localhost:3000/findPwd">비밀번호 찾기</a>
             </pre>
             <button className="button" type="submit" onClick={onClickLogin}>
               로그인
             </button>
           </form>
         </Card>
-    </Row>
+      </Row>
     </div>
   );
 }

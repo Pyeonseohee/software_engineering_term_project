@@ -4,10 +4,12 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-const url = "http://localhost:8080/api/login";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+const url = "http://localhost:8080/api/findPwd";
 
 function FindPwdPage(props) {
+  const navigate = useNavigate();
   const [Email, setEmail] = useState("");
   const [Name, setName] = useState("");
 
@@ -36,7 +38,20 @@ function FindPwdPage(props) {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        // 어떻게 해라.
+        console.log(res.data);
+        if (res.data == "아이디를 다시 입력해주세요") {
+          new Swal({
+            title: "일치하는 회원이 없습니다.",
+            icon: "warning",
+          });
+        } else {
+          new Swal({
+            title: Name + "님의 비밀번호는 '" + res.data + "'입니다.",
+            icon: "info",
+          }).then(function () {
+            navigate("/*");
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -66,7 +81,7 @@ function FindPwdPage(props) {
             <input type="text" value={Name} onChange={onNameHandler} />
             <br />
             <lable>이메일</lable>
-            <input type="Email" value={Email} onChange={onEmailHandler} />
+            <input type="text" value={Email} onChange={onEmailHandler} />
             <br />
             <button className="button" type="submit" onClick={onClickFindPwd}>
               비밀번호 찾기
