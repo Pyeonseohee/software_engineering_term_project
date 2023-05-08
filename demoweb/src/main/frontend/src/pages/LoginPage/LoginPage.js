@@ -4,7 +4,6 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import "./button.css";
 const url = "http://localhost:8080/api/login";
 
@@ -37,7 +36,7 @@ function LoginPage(props) {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        // 어떻게 해라.
+        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -55,8 +54,8 @@ function LoginPage(props) {
         height: "100vh",
       }}
     >
-    <Row>
-      <h2>Cafe Regulation System</h2>
+      <Row>
+        <h2>Cafe Regulation System</h2>
         <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
           <br />
           <form
@@ -74,14 +73,15 @@ function LoginPage(props) {
             />
             <br />
             <pre>
-            <a href="http://localhost:3000/register">회원가입</a>  <a href="http://localhost:3000/findPwd">비밀번호 찾기</a>
+              <a href="http://localhost:3000/register">회원가입</a>{" "}
+              <a href="http://localhost:3000/findPwd">비밀번호 찾기</a>
             </pre>
             <button className="button" type="submit" onClick={onClickLogin}>
               로그인
             </button>
           </form>
         </Card>
-    </Row>
+      </Row>
     </div>
   );
 }

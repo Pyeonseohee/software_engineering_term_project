@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
+import axios from "axios";
+import CryptoJS from "crypto-js";
+import Swal from "sweetalert2";
+
+const url = "http://localhost:8080/api/signIn";
 
 function RegisterPage(props) {
   const [Email, setEmail] = useState("");
@@ -28,6 +33,41 @@ function RegisterPage(props) {
     event.preventDefault();
   };
 
+  const onClickRegister = (event) => {
+    const secretKey = "0509";
+    if (Password === ConfirmPassword) {
+      const cipherText = CryptoJS.AES.encrypt(Password, secretKey).toString();
+      // const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+      // const original = bytes.toString(CryptoJS.enc.Utf8);
+
+      const data = {
+        user_id: Email,
+        name: Name,
+        password: cipherText,
+      };
+      console.log(JSON.stringify(data));
+
+      axios
+        .post(url, JSON.stringify(data), {
+          headers: { "Content-Type": "application/json" },
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      new Swal({
+        title: "회원가입 완료되었습니다!",
+        icon: "success",
+      }).then(function () {
+        location.herf = "";
+      });
+    } else {
+      console.log("No");
+    }
+  };
+
   return (
     <div
       style={{
@@ -38,71 +78,45 @@ function RegisterPage(props) {
         height: "100vh",
       }}
     >
-    <Row>
-      <h2>Cafe Regulation System</h2>
+      <Row>
+        <h2>Cafe Regulation System</h2>
         <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
           <br />
           <form
-        style={{ display: "flex", flexDirection: "column" }}
-        onSubmit={onSubmitHandler}
-      >
-        <lable>이메일</lable>
-        <input type="email" value={Email} onChange={onEmailHandler} />
-        <br />
+            style={{ display: "flex", flexDirection: "column" }}
+            onSubmit={onSubmitHandler}
+          >
+            <lable>이메일</lable>
+            <input type="text" value={Email} onChange={onEmailHandler} />
+            <br />
 
-        <lable>이름</lable>
-        <input type="text" value={Name} onChange={onNameHandler} />
-        <br />
+            <lable>이름</lable>
+            <input type="text" value={Name} onChange={onNameHandler} />
+            <br />
 
-        <lable>비밀번호</lable>
-        <input type="Password" value={Password} onChange={onPasswordHandler} />
-        <br />
+            <lable>비밀번호</lable>
+            <input
+              type="Password"
+              value={Password}
+              onChange={onPasswordHandler}
+            />
+            <br />
 
-        <lable>비밀번호 확인</lable>
-        <input
-          type="Password"
-          value={ConfirmPassword}
-          onChange={onConfirmPasswordHandler}
-        />
-        <br />
-        <br />
-        <button className="button" type="submit">회원가입</button>
-      </form>
+            <lable>비밀번호 확인</lable>
+            <input
+              type="Password"
+              value={ConfirmPassword}
+              onChange={onConfirmPasswordHandler}
+            />
+            <br />
+            <br />
+            <button className="button" type="submit" onClick={onClickRegister}>
+              회원가입
+            </button>
+          </form>
         </Card>
-    </Row>
+      </Row>
     </div>
-    // <div
-    //   style={{
-    //     display: "flex",
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //     width: "100%",
-    //     height: "100vh",
-    //   }}
-    // >
-    //   <form
-    //     style={{ display: "flex", flexDirection: "column" }}
-    //     onSubmit={onSubmitHandler}
-    //   >
-    //     <lable>ID</lable>
-    //     <input type="text" value={Id} onChange={onIdHandler} />
-
-    //     <lable>Name</lable>
-    //     <input type="text" value={Name} onChange={onNameHandler} />
-
-    //     <lable>Password</lable>
-    //     <input type="Password" value={Password} onChange={onPasswordHandler} />
-
-    //     <lable>Confirm Password</lable>
-    //     <input
-    //       type="Password"
-    //       value={ConfirmPassword}
-    //       onChange={onConfirmPasswordHandler}
-    //     />
-    //     <br />
-    //     <button type="submit">회원가입</button>
-    //   </form>
-    // </div>
   );
 }
 
