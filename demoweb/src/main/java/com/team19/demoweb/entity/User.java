@@ -12,13 +12,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class User { // table 역할
     @Id // primary key
-    @Column(name="user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name="user_id", unique = true)
     private String email;
     @Column(name="password")
     private String pw;
     @Column
     private String name;
-    @Column(name = "store_id")
+    @Column(name = "store_name", unique = true)
     private String store;
     
     @Builder

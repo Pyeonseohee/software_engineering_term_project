@@ -30,6 +30,7 @@ public class LoginController {
     @PostMapping ("/api/signIn")
     public User signIn(@RequestBody User user){
         System.out.println(user);
+        if(userRepository.findByEmail(user.getEmail()).isPresent()) return null;//중복방지
         return userRepository.save(user);
     }
     
