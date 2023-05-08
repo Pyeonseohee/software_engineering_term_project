@@ -4,10 +4,12 @@ import Row from "react-bootstrap/Row";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const url = "http://localhost:8080/api/signIn";
 
 function RegisterPage(props) {
+  const navigate = useNavigate();
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [Name, setName] = useState("");
@@ -35,6 +37,7 @@ function RegisterPage(props) {
 
   const onClickRegister = (event) => {
     const secretKey = "0509";
+
     if (Password === ConfirmPassword) {
       const cipherText = CryptoJS.AES.encrypt(Password, secretKey).toString();
       // const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
@@ -61,10 +64,14 @@ function RegisterPage(props) {
         title: "회원가입 완료되었습니다!",
         icon: "success",
       }).then(function () {
-        location.herf = "";
+        navigate("/*");
       });
     } else {
       console.log("No");
+      new Swal({
+        title: "비밀번호가 일치하지 않습니다!",
+        icon: "error",
+      });
     }
   };
 
