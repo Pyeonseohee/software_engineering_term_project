@@ -1,6 +1,6 @@
 package com.team19.demoweb.Controller;
 
-import com.team19.demoweb.entity.UserEntity;
+import com.team19.demoweb.entity.User;
 import com.team19.demoweb.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +19,8 @@ public class LoginController {
     
     
     @GetMapping("/api/login")
-    public boolean login(@RequestBody UserEntity user){
-        Optional<UserEntity> userEntities = userRepository.findByEmail(user.getEmail());
+    public boolean login(@RequestBody User user){
+        Optional<User> userEntities = userRepository.findByEmail(user.getEmail());
         if(userEntities.isEmpty() == true) return false;
         if(!userEntities.get().getPw().equals(user.getPw())) return false;
         return true;
@@ -28,21 +28,22 @@ public class LoginController {
     
     //POST로 유저 추가
     @PostMapping ("/api/signIn")
-    public UserEntity signIn(@RequestBody UserEntity user){
+    public User signIn(@RequestBody User user){
         System.out.println(user);
         return userRepository.save(user);
     }
     
     @GetMapping("/api/findPwd")
-    public String findPwd(@RequestBody UserEntity user){
-        Optional<UserEntity> userEntities = userRepository.findByEmail(user.getEmail());
+    public String findPwd(@RequestBody User user){
+        Optional<User> userEntities = userRepository.findByEmail(user.getEmail());
         if(userEntities.isEmpty() == true) return "아이디를 다시 입력해주세요";
         return userEntities.get().getPw();
     }
     @Transactional
     @DeleteMapping("/api/exit")
-    public boolean exit(@RequestBody UserEntity user) {
+    public boolean exit(@RequestBody User user) {
         if(userRepository.deleteByEmail(user.getEmail()).isEmpty()) return false;
         return true;
     }
+    
 }

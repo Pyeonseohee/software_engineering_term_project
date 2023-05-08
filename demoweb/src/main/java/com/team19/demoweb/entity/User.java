@@ -10,8 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-@Table(name = "user") // database에 해당 이름의 테이블 생성
-public class UserEntity { // table 역할
+public class User { // table 역할
     @Id // primary key
     @Column(name="user_id")
     private String email;
@@ -23,7 +22,7 @@ public class UserEntity { // table 역할
     private String store;
     
     @Builder
-    public UserEntity(String email, String pw, String name, String store) {
+    public User(String email, String pw, String name, String store) {
         this.email = email;
         this.pw = pw;
         this.name = name;
