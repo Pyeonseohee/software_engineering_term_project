@@ -13,10 +13,10 @@ public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_name", referencedColumnName = "store_name")
-    private User user;
+//    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "store_name", referencedColumnName = "store_name")
+    @Column(name = "store_name", unique = true)
+    private String store;
     @Column(name = "seats")
     private int seats;
-    
 }
