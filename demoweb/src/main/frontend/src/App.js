@@ -12,9 +12,9 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/*" element={<LoginPage />} />
+          <Route path="/*" element={<MapPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/map" element={<MapPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/findPwd" element={<FindPwdPage />} />
           <Route path="/test" element={<KakaoMapExample />} />
         </Routes>
