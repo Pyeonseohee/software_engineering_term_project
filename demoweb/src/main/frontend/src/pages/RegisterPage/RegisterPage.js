@@ -38,17 +38,19 @@ function RegisterPage(props) {
 
   const onClickRegister = (event) => {
     const secretKey = "0509";
-
     if (Password === ConfirmPassword) {
       const cipherText = CryptoJS.AES.encrypt(Password, secretKey).toString();
       // const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
       // const original = bytes.toString(CryptoJS.enc.Utf8);
 
+      //이 형식으로 보내야함!!!!!
       const data = {
-        user_id: Email,
+        email: Email,
         name: Name,
-        password: cipherText,
+        pw: cipherText,
+        store: ConfirmPassword,
       };
+
       console.log(JSON.stringify(data));
 
       axios
@@ -56,17 +58,27 @@ function RegisterPage(props) {
           headers: { "Content-Type": "application/json" },
         })
         .then((res) => {
-          console.log(res);
+          // 이미 아이디가 존재한다면
+          if (res.data == "exist") {
+            new Swal({
+              title: "이미 존재하는 아이디입니다.",
+              icon: "warning",
+            }).then(function () {
+              navigate("/login");
+            });
+          } else {
+            // 아이디가 존재하지 않는다면
+            new Swal({
+              title: "회원가입 완료되었습니다!",
+              icon: "success",
+            }).then(function () {
+              navigate("/login");
+            });
+          }
         })
         .catch((error) => {
           console.log(error);
         });
-      new Swal({
-        title: "회원가입 완료되었습니다!",
-        icon: "success",
-      }).then(function () {
-        navigate("/login");
-      });
     } else {
       console.log("No");
       new Swal({
