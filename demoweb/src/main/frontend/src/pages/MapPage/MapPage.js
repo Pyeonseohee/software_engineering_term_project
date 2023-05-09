@@ -47,14 +47,17 @@ const MapPage = () => {
       kakao.maps.event.addListener(marker, "click", function () {
         // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
         infowindow.setContent(
-          '<div style="padding:5px;font-size:12px;">' +
+          '<div style="padding:3px;font-size:12px;">' +
+            '<a href="#" target="_blank" style="text-decoration-line:none">' +
             place.place_name +
+            "</a>" +
             "</div>"
         );
         infowindow.open(map, marker);
       });
     }
 
+    // search된 place 보여줌.
     function placeSearchCB(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
         var bounds = new kakao.maps.LatLngBounds();
