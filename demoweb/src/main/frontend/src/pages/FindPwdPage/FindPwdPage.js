@@ -1,11 +1,15 @@
 //client/src/pages/Login.js
 import React, { useState } from "react";
-import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Card from "react-bootstrap/Card";
-import Row from "react-bootstrap/Row";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Card, Row } from "react-bootstrap";
+
+import CryptoJS from "crypto-js";
+import Swal from "sweetalert2";
+import axios from "axios";
+import Narvar from "../MapPage/Narvar";
+
 const url = "http://localhost:8080/api/findPwd";
 
 function FindPwdPage(props) {
@@ -26,6 +30,7 @@ function FindPwdPage(props) {
   };
 
   const onClickFindPwd = (event) => {
+    const secretKey = "0509";
     console.log("click login");
     const data = {
       name: Name,
@@ -45,11 +50,13 @@ function FindPwdPage(props) {
             icon: "warning",
           });
         } else {
+          const bytes = CryptoJS.AES.decrypt(res.data, secretKey);
+          const original = bytes.toString(CryptoJS.enc.Utf8);
           new Swal({
-            title: Name + "님의 비밀번호는 '" + res.data + "'입니다.",
+            title: Name + "님의 비밀번호는 '" + original + "'입니다.",
             icon: "info",
           }).then(function () {
-            navigate("/*");
+            navigate("/login");
           });
         }
       })
@@ -60,36 +67,40 @@ function FindPwdPage(props) {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100vh",
-      }}
-    >
-      <Row>
-        <h2>비밀번호 찾기</h2>
-        <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
-          <br />
-          <form
-            style={{ display: "flex", flexDirection: "column" }}
-            onSubmit={onSubmitHandler}
-          >
-            <lable>이름</lable>
-            <input type="text" value={Name} onChange={onNameHandler} />
+    <div>
+      <Narvar></Narvar>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "100vh",
+        }}
+      >
+        <Row>
+          <h2>비밀번호 찾기</h2>
+          <Card body style={{ marginTop: "1rem", borderRadius: "10px" }}>
             <br />
-            <lable>이메일</lable>
-            <input type="text" value={Email} onChange={onEmailHandler} />
-            <br />
-            <button className="button" type="submit" onClick={onClickFindPwd}>
-              비밀번호 찾기
-            </button>
-          </form>
-        </Card>
-      </Row>
+            <form
+              style={{ display: "flex", flexDirection: "column" }}
+              onSubmit={onSubmitHandler}
+            >
+              <lable>이름</lable>
+              <input type="text" value={Name} onChange={onNameHandler} />
+              <br />
+              <lable>이메일</lable>
+              <input type="text" value={Email} onChange={onEmailHandler} />
+              <br />
+              <button className="button" type="submit" onClick={onClickFindPwd}>
+                비밀번호 찾기
+              </button>
+            </form>
+          </Card>
+        </Row>
+      </div>
     </div>
   );
 }
+
 export default FindPwdPage;

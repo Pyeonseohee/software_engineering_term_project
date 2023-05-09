@@ -1,11 +1,9 @@
 // MapContainer.js
 
 import React, { useEffect, useRef, useState } from "react";
-import Navbar from "react-bootstrap/Navbar";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import { Navbar, Form, Button, Dropdown } from "react-bootstrap";
 import { BiUserCircle } from "react-icons/bi";
-import "./narvar.css";
+import "./mapPage.css";
 
 const { kakao } = window;
 
@@ -19,6 +17,10 @@ const MapPage = () => {
 
   const onSearchHandler = (event) => {
     console.log(keyword);
+  };
+
+  const onUserButtonHandler = (event) => {
+    console.log("Click!");
   };
 
   const container = useRef(null);
@@ -45,14 +47,17 @@ const MapPage = () => {
       kakao.maps.event.addListener(marker, "click", function () {
         // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
         infowindow.setContent(
-          '<div style="padding:5px;font-size:12px;">' +
+          '<div style="padding:3px;font-size:12px;">' +
+            '<a href="#" target="_blank" style="text-decoration-line:none">' +
             place.place_name +
+            "</a>" +
             "</div>"
         );
         infowindow.open(map, marker);
       });
     }
 
+    // search된 place 보여줌.
     function placeSearchCB(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
         var bounds = new kakao.maps.LatLngBounds();
@@ -68,7 +73,7 @@ const MapPage = () => {
   return (
     <div>
       <Navbar className="topNarvar" variant="dark">
-        <Navbar.Brand href="#home">Cafe</Navbar.Brand>
+        <Navbar.Brand href="/">Cafe</Navbar.Brand>
         <Form className="d-flex">
           <Form.Control
             type="search"
@@ -81,7 +86,19 @@ const MapPage = () => {
             Search
           </Button>
         </Form>
-        <BiUserCircle className="icon" size="24" color="white" />
+        <Dropdown>
+          <Dropdown.Toggle id="dropdown-basic">
+            <button className="userButton" onClick={onUserButtonHandler}>
+              <BiUserCircle className="icon" size="24" color="white" />
+            </button>
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item href="/register">회원가입</Dropdown.Item>
+            <Dropdown.Item href="/login">로그인</Dropdown.Item>
+            <Dropdown.Item href="/findPwd">비밀번호 찾기</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </Navbar>
       <div
         id={"map"}
