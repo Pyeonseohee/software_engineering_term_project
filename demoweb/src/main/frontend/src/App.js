@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MapPage from "./pages/MapPage/MapPage";
 import FindPwdPage from "./pages/FindPwdPage/FindPwdPage";
+import KakaoMapExample from "./pages/MapPage/KakaoMapExample";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/findPwd" element={<FindPwdPage />} />
+          <Route path="/test" element={<KakaoMapExample />} />
         </Routes>
       </BrowserRouter>
     </div>
