@@ -1,10 +1,13 @@
 package com.team19.demoweb.Controller;
 
+import com.fasterxml.jackson.core.sym.Name;
+import com.team19.demoweb.dto.UserSetStoreRequestDto;
 import com.team19.demoweb.entity.*;
 import com.team19.demoweb.repository.ItemRepository;
 import com.team19.demoweb.repository.SeatsRepository;
 import com.team19.demoweb.repository.StoreRepository;
 import com.team19.demoweb.repository.UserRepository;
+import com.team19.demoweb.repository.SessionMemory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -16,25 +19,37 @@ public class StoreController {
     private final UserRepository userRepository;
     private final SeatsRepository seatsRepository;
     private final ItemRepository itemRepository;
+    private final SessionMemory sessionMemory;
+    private final UserController userController;
     
-    public StoreController(StoreRepository storeRepository, UserRepository userRepository, SeatsRepository seatsRepository, ItemRepository itemRepository) {
+    public StoreController(StoreRepository storeRepository, UserRepository userRepository, SeatsRepository seatsRepository, ItemRepository itemRepository, SessionMemory sessionMemory, UserController userController) {
         this.storeRepository = storeRepository;
         this.userRepository = userRepository;
         this.seatsRepository = seatsRepository;
         this.itemRepository = itemRepository;
+        this.sessionMemory = sessionMemory;
+        this.userController = userController;
     }
-    
-    @PostMapping("/api/store")//가게정보DB에입력
-    public Store postStore(@RequestBody Store store) {
+    //매장정보 설정
+    @PostMapping("/api/setstore")
+    public String setStore(@RequestBody UserSetStoreRequestDto dto) {
         //Optional<User> user = userRepository.findByStore(store.getUser().getStore());
-        Optional<User> user = userRepository.findByEmail(store.getUser().getEmail());
-        store.setUser(user.get());
+        //세션 검증 후 유저 정보 가져오기
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return "Invalid Session";
+        } 
+        //매장정보 기반으로 객체 생성후, 유저와 관계 설정 후 저장
+        Store store = new Store(user, dto.getName(), dto.getSeats());
+        store.setUser(user);
         storeRepository.save(store);
-        for (long i = 0; i < store.getSeats(); i++) {
+        for (long i = 0; i < dto.getSeats(); i++) {
             Seats seats = new Seats(i+1, store, true);
             seatsRepository.save(seats);
         }
-        return storeRepository.save(store);//이거해라
+        return "Store information setting Sucessful";
     }
     
     @GetMapping("/api/store")//가게정보 클라에 제공

@@ -24,6 +24,20 @@ public class UserController {
         this.userRepository = userRepository;
         this.sessionMemory = sessionMemory;
     }
+    //회원가입
+    @PostMapping("/api/signin")
+    public String signInV2(@RequestBody UserSignInRequestDto dto){
+        //유저 객체 생성
+        User user = new User(dto.getEmail(), dto.getPw(), dto.getName());
+        //유저 아이디가 중복되지 않을 시
+        if(userRepository.findByUserId(user.getEmail())==null){ 
+            //유저 객체 레포지토리에 저장
+            userRepository.save(user);
+            return "Sign in complete";
+        } else{
+            return "ID already used";
+        }
+    }
     //로그인
     @PostMapping("/api/login")
     public String loginV2(@RequestBody UserLogInRequestDto dto){
@@ -48,20 +62,6 @@ public class UserController {
             return "Session Not Found";
         }
         return "Log out completed";
-    }
-    //회원가입
-    @PostMapping("/api/signin")
-    public String signInV2(@RequestBody UserSignInRequestDto dto){
-        //유저 객체 생성
-        User user = new User(dto.getEmail(), dto.getPw(), dto.getName());
-        //유저 아이디가 중복되지 않을 시
-        if(userRepository.findByUserId(user.getEmail())==null){ 
-            //유저 객체 레포지토리에 저장
-            userRepository.save(user);
-            return "Sign in complete";
-        } else{
-            return "ID already used";
-        }
     }
     //회원 정보 조회
     @PostMapping("/api/userInfo")
