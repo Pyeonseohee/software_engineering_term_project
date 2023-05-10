@@ -11,11 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Store {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "store_name", referencedColumnName = "store_name")
-    @Column(name = "store_name", unique = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
+    private User user;
+    @Column(name = "store_name")
     private String store;
     @Column(name = "seats")
     private int seats;

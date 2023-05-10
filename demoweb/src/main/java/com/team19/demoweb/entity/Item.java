@@ -14,13 +14,11 @@ public class Item {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
-    private Store store_id;
+    private Store store;
     @Column
     private String name;
     @Column
     private int price;
     @Column
     private int time;
-    
-    
 }

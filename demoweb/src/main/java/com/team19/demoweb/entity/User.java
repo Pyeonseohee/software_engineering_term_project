@@ -20,15 +20,11 @@ public class User { // table 역할
     private String pw;
     @Column
     private String name;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_name", referencedColumnName = "store_name")
-    private Store store;
     
     @Builder
-    public User(String email, String pw, String name, Store store) {
+    public User(String email, String pw, String name) {
         this.email = email;
         this.pw = pw;
         this.name = name;
-        this.store = store;
     }
 }

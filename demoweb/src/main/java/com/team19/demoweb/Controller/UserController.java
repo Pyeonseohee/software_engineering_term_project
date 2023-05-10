@@ -17,24 +17,25 @@ public class UserController {
         this.userRepository = userRepository;
     }
     
-    //이메일(id)나 비번이 틀리면 false
-    @GetMapping("/api/login")
-    public boolean login(@RequestBody User user){
+    
+    @PostMapping("/api/login")
+    public String login(@RequestBody User user){
+        System.out.println(user);
         Optional<User> userEntities = userRepository.findByEmail(user.getEmail());
-        if(userEntities.isEmpty() == true) return false;
-        if(!userEntities.get().getPw().equals(user.getPw())) return false;
-        return true;
+        if(userEntities.isEmpty() == true) return "not found";
+        return userEntities.get().getPw();
     }
     
     //POST로 유저 추가
     @PostMapping ("/api/signIn")
-    public User signIn(@RequestBody User user){
+    public boolean signIn(@RequestBody User user){
         System.out.println(user);
-        if(userRepository.findByEmail(user.getEmail()).isPresent()) return null;//중복방지
-        return userRepository.save(user);
+        if(userRepository.findByEmail(user.getEmail()).isPresent()) return false;//중복방지
+        userRepository.save(user);
+        return true;
     }
     //이메일(id)이 틀리면 아이디를 다시 입력해주세요 메세지 리턴, 맞으면 비번 리턴
-    @GetMapping("/api/findPwd")
+    @PostMapping("/api/findPwd")
     public String findPwd(@RequestBody User user){
         Optional<User> userEntities = userRepository.findByEmail(user.getEmail());
         if(userEntities.isEmpty() == true) return "아이디를 다시 입력해주세요";

@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
-    Optional<Store> findByStore(String store);//유저에서 스토어네임가져온다
+    Optional<Store> findByUser(User user);//유저에서 스토어네임가져온다
 }
