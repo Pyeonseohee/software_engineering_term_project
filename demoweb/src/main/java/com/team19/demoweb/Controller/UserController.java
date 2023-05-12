@@ -9,6 +9,9 @@ import com.team19.demoweb.dto.UserSignInRequestDto;
 import com.team19.demoweb.entity.User;
 import com.team19.demoweb.repository.SessionMemory;
 import com.team19.demoweb.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +33,7 @@ public class UserController {
         //유저 객체 생성
         User user = new User(dto.getEmail(), dto.getPw(), dto.getName());
         //유저 아이디가 중복되지 않을 시
-        if(userRepository.findByUserId(user.getEmail())==null){ 
+        if(userRepository.findByEmail(user.getEmail())==null){ 
             //유저 객체 레포지토리에 저장
             userRepository.save(user);
             return "Sign in complete";
@@ -41,7 +44,7 @@ public class UserController {
     //로그인
     @PostMapping("/api/login")
     public String loginV2(@RequestBody UserLogInRequestDto dto){
-        User user = userRepository.findByUserId(dto.getEmail());
+        User user = userRepository.findByEmail(dto.getEmail());
         if(user.getPw().equals(dto.getPw())){
             //세션 생성 및 유저에게 부여
             return sessionMemory.createSession(user);
@@ -64,7 +67,7 @@ public class UserController {
         return "Log out completed";
     }
     //회원 정보 조회
-    @PostMapping("/api/userInfo")
+    @PostMapping("/api/userinfo")
     public User userInfoV2(@RequestBody UserInfoRequestDto dto){
         //세션 확인
         User user;
@@ -73,6 +76,7 @@ public class UserController {
         } catch (Exception e) {
             return null;
         }
+        if(!dto.getPw().equals(user.getPw())) return null;
         //유저 객체 반환
         return user;
     }
@@ -93,7 +97,8 @@ public class UserController {
         return "Sign out succeeded";
     }
     //비밀번호 변경
-    @PostMapping("/api/changePwd")
+    @Transactional
+    @PostMapping("/api/changepwd")
     public String changePwdV2(@RequestBody UserChangePwdRequestDto dto){
         // session 확인
         User user;

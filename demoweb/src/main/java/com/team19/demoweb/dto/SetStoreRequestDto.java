@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoRequestDto {
+public class SetStoreRequestDto {
     private String session;
-    private String pw;
+    private String name;
+    private int seatCnt;
 }

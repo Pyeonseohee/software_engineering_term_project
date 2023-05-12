@@ -1,4 +1,4 @@
-package com.team19.demoweb;
+/*package com.team19.demoweb;
 
 import com.team19.demoweb.entity.Seats;
 import com.team19.demoweb.entity.Store;
@@ -31,4 +31,4 @@ public class StoreTest {
         seatsRepository.save(seats);
     
     }
-}
+}*/

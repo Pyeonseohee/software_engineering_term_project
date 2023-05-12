@@ -15,7 +15,7 @@ public class User { // table 역할
     @Id // primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="user_id", unique = true)
+    @Column(name="email", unique = true)
     private String email;
     @Column(name="password")
     private String pw;

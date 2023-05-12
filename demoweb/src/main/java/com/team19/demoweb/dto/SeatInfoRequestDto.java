@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoRequestDto {
+public class SeatInfoRequestDto {
     private String session;
-    private String pw;
 }
