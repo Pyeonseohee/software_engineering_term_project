@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import MapPage from "./pages/MapPage/MapPage";
 import FindPwdPage from "./pages/FindPwdPage/FindPwdPage";
 import KakaoMapExample from "./pages/MapPage/KakaoMapExample";
+import CafeOwnerPage from "./pages/CafeOwnerPage/CafeOwnerPage";
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
         <Routes>
           <Route path="/*" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/map" element={<MapPage />} />
           <Route path="/findPwd" element={<FindPwdPage />} />
+          <Route path="/cafeOwner" element={<CafeOwnerPage />} />
+          <Route path="/map" element={<MapPage />} />
           <Route path="/test" element={<KakaoMapExample />} />
         </Routes>
       </BrowserRouter>
