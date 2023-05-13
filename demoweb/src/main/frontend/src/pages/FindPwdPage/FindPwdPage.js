@@ -56,7 +56,7 @@ function FindPwdPage(props) {
             title: Name + "님의 비밀번호는 '" + original + "'입니다.",
             icon: "info",
           }).then(function () {
-            navigate("/login");
+            navigate("/");
           });
         }
       })

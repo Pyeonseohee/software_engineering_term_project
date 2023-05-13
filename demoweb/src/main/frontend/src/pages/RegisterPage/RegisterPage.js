@@ -64,7 +64,7 @@ function RegisterPage(props) {
               title: "이미 존재하는 아이디입니다.",
               icon: "warning",
             }).then(function () {
-              navigate("/login");
+              navigate("/");
             });
           } else {
             // 아이디가 존재하지 않는다면
@@ -72,7 +72,7 @@ function RegisterPage(props) {
               title: "회원가입 완료되었습니다!",
               icon: "success",
             }).then(function () {
-              navigate("/login");
+              navigate("/");
             });
           }
         })
