@@ -6,8 +6,8 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import MapPage from "./pages/MapPage/MapPage";
 import FindPwdPage from "./pages/FindPwdPage/FindPwdPage";
 import KakaoMapExample from "./pages/MapPage/KakaoMapExample";
-import CafeOwnerPage from "./pages/CafeOwnerPage/CafeOwnerPage";
-
+import SeatPage from "./pages/SeatPage/SeatPage";
+import SeatPage2 from "./pages/SeatPage/SeatPage2";
 function App() {
   return (
     <div className="App">
@@ -16,7 +16,8 @@ function App() {
           <Route path="/*" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/findPwd" element={<FindPwdPage />} />
-          <Route path="/cafeOwner" element={<CafeOwnerPage />} />
+          <Route path="/seat" element={<SeatPage />} />
+          <Route path="/seat2" element={<SeatPage2 />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/test" element={<KakaoMapExample />} />
         </Routes>
