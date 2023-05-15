@@ -1,7 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
+import { BiPlus } from "react-icons/bi";
 import Narvar from "../MapPage/Narvar";
 
 function SeatPage2() {
+  const [selectedButtons, setSelectedButtons] = useState([]);
+
+  const handleButtonClick = (index) => {
+    if (selectedButtons.includes(index)) {
+      // 이미 선택된 버튼일 경우 선택 해제
+      setSelectedButtons(selectedButtons.filter((btn) => btn !== index));
+    } else {
+      // 선택되지 않은 버튼일 경우 선택 추가
+      setSelectedButtons([...selectedButtons, index]);
+    }
+  };
+  const handleButtonDoubleClick = (index) => {
+    // 버튼 더블 클릭 시 선택 해제
+    setSelectedButtons(selectedButtons.filter((btn) => btn !== index));
+  };
+
   return (
     <div>
       <Narvar></Narvar>
@@ -25,14 +42,18 @@ function SeatPage2() {
           {Array.from({ length: 100 }, (_, index) => (
             <button
               key={index}
+              onClick={() => handleButtonClick(index)}
+              onDoubleClick={() => handleButtonDoubleClick(index)}
               style={{
                 width: "100%",
                 height: "100%",
-                backgroundColor: "#F0F0F0",
+                backgroundColor: selectedButtons.includes(index)
+                  ? "#1B9C85"
+                  : "#F0F0F0",
                 border: "none",
               }}
             >
-              {index + 1}
+              <BiPlus className="icon" size="30px" color="black" />
             </button>
           ))}
         </div>
