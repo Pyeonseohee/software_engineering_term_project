@@ -10,8 +10,9 @@ import axios from "axios";
 import Narvar from "../MapPage/Narvar";
 import "./button.css";
 
-const url = "http://localhost:8080/api/login";
-
+const LoginURL = "http://localhost:8080/api/login";
+const SessionURL = "http://localhost:8080/api/userinfo";
+var session = "";
 function LoginPage(props) {
   const navigate = useNavigate();
   const [Email, setEmail] = useState("");
@@ -34,15 +35,15 @@ function LoginPage(props) {
     console.log("click login");
     const data = {
       email: Email,
+      pw: Password,
     };
 
     axios
-      .post(url, JSON.stringify(data), {
+      .post(LoginURL, JSON.stringify(data), {
         // 이메일 데이터만 보내고
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        console.log(res);
         // 아이디가 존재하지 않으면
         if (res.data == "login fail") {
           new Swal({
@@ -50,12 +51,14 @@ function LoginPage(props) {
             icon: "warning",
           });
         } else {
+          session = res.data;
+          console.log(session);
           // 아이디가 존재하면
           new Swal({
             title: "로그인 되었습니다!",
             icon: "success",
           }).then(function () {
-            navigate("/");
+            navigate("/owner", { state: { UserSession: session } });
           });
           // const bytes = CryptoJS.AES.decrypt(res.data, secretKey);
           // const original = bytes.toString(CryptoJS.enc.Utf8);
@@ -79,7 +82,17 @@ function LoginPage(props) {
       .catch((error) => {
         console.log(error);
       });
-    console.log("test");
+    const getData = {
+      session: session,
+      pw: Password,
+    };
+    axios
+      .post(SessionURL, JSON.stringify(getData), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res);
+      });
   };
 
   return (
