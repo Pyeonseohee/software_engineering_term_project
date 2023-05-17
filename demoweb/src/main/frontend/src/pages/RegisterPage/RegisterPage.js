@@ -6,7 +6,7 @@ import CryptoJS from "crypto-js"; // 암호화
 import Swal from "sweetalert2"; // alert 디자인
 import Narvar from "../MapPage/Narvar";
 
-const url = "http://localhost:8080/api/signIn";
+const url = "http://localhost:8080/api/signin";
 
 function RegisterPage(props) {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ function RegisterPage(props) {
   const onClickRegister = (event) => {
     const secretKey = "0509";
     if (Password === ConfirmPassword) {
-      const cipherText = CryptoJS.AES.encrypt(Password, secretKey).toString();
+      // const cipherText = CryptoJS.AES.encrypt(Password, secretKey).toString();
       // const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
       // const original = bytes.toString(CryptoJS.enc.Utf8);
 
@@ -47,8 +47,7 @@ function RegisterPage(props) {
       const data = {
         email: Email,
         name: Name,
-        pw: cipherText,
-        store: ConfirmPassword,
+        pw: Password,
       };
 
       console.log(JSON.stringify(data));
@@ -59,7 +58,7 @@ function RegisterPage(props) {
         })
         .then((res) => {
           // 이미 아이디가 존재한다면
-          if (res.data == "exist") {
+          if (res.data == "ID already used") {
             new Swal({
               title: "이미 존재하는 아이디입니다.",
               icon: "warning",
@@ -80,7 +79,6 @@ function RegisterPage(props) {
           console.log(error);
         });
     } else {
-      console.log("No");
       new Swal({
         title: "비밀번호가 일치하지 않습니다!",
         icon: "error",
