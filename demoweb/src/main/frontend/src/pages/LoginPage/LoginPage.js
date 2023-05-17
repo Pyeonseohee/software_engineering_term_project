@@ -44,30 +44,36 @@ function LoginPage(props) {
       .then((res) => {
         console.log(res);
         // 아이디가 존재하지 않으면
-        if (res.data == "not found") {
+        if (res.data == "login fail") {
           new Swal({
             title: "존재하지 않는 아이디입니다.",
             icon: "warning",
           });
         } else {
           // 아이디가 존재하면
-          const bytes = CryptoJS.AES.decrypt(res.data, secretKey);
-          const original = bytes.toString(CryptoJS.enc.Utf8);
-          if (original == Password) {
-            // 비밀번호까지 일치하면
-            new Swal({
-              title: "로그인 되었습니다!",
-              icon: "success",
-            }).then(function () {
-              navigate("/");
-            });
-          } else {
-            // 비밀번호가 일치하지 않으면
-            new Swal({
-              title: "비밀번호가 일치하지 않습니다.",
-              icon: "warning",
-            });
-          }
+          new Swal({
+            title: "로그인 되었습니다!",
+            icon: "success",
+          }).then(function () {
+            navigate("/");
+          });
+          // const bytes = CryptoJS.AES.decrypt(res.data, secretKey);
+          // const original = bytes.toString(CryptoJS.enc.Utf8);
+          // if (original == Password) {
+          //   // 비밀번호까지 일치하면
+          //   new Swal({
+          //     title: "로그인 되었습니다!",
+          //     icon: "success",
+          //   }).then(function () {
+          //     navigate("/");
+          //   });
+          // } else {
+          //   // 비밀번호가 일치하지 않으면
+          //   new Swal({
+          //     title: "비밀번호가 일치하지 않습니다.",
+          //     icon: "warning",
+          //   });
+          // }
         }
       })
       .catch((error) => {
