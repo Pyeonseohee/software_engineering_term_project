@@ -10,7 +10,7 @@ function CafeOwnerPage() {
   const location = useLocation();
   const UserInfo = { ...location.state };
   userSession = UserInfo.userSession;
-  console.log(userSession);
+
   const [stores, setStores] = useState([]);
   const [newStoreName, setNewStoreName] = useState("");
 

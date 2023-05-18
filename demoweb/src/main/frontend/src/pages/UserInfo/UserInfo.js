@@ -19,6 +19,27 @@ function UserInfo(props) {
   const [Email, setEmail] = useState("");
   const [Name, setName] = useState("");
 
+  const location = useLocation();
+  const UserInfo = { ...location.state };
+  useEffect(() => {
+    setUserSession(UserInfo.userSession);
+  });
+
+  // userInfo에게 보낼 데이터
+  const data = {
+    session: userSession,
+    pw: "gachon",
+  };
+
+  axios
+    .post(userInfoURL, JSON.stringify(data), {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then((res) => {
+      setEmail(res.data.email); // 화면에 이메일과 이름 출력
+      setName(res.data.name);
+    });
+
   // 로그아웃 핸들러
   const LogoutButtonHandler = (event) => {
     new Swal({
@@ -170,27 +191,6 @@ function UserInfo(props) {
       }
     });
   };
-
-  const location = useLocation();
-  const UserInfo = { ...location.state };
-  useEffect(() => {
-    setUserSession(UserInfo.userSession);
-  });
-
-  // userInfo에게 보낼 데이터
-  const data = {
-    session: userSession,
-    pw: "hi",
-  };
-
-  axios
-    .post(userInfoURL, JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" },
-    })
-    .then((res) => {
-      setEmail(res.data.email); // 화면에 이메일과 이름 출력
-      setName(res.data.name);
-    });
 
   return (
     <div>
