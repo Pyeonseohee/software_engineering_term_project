@@ -10,8 +10,8 @@ import FindPwdPage from "./pages/FindPwdPage/FindPwdPage";
 import CafeOwnerPage from "./pages/CafeOwnerPage/CafeOwnerPage";
 import SeatPage from "./pages/SeatPage/SeatPage";
 import SeatPage2 from "./pages/SeatPage/SeatPage2";
-import CafeOwnerPage from "./pages/CafeOwnerPage/CafeOwnerPage";
 import MapPage from "./pages/MapPage/MapPage";
+import KakaoMapExample from "./pages/MapPage/KakaoMapExample"
 function App() {
   return (
     <div className="App">
