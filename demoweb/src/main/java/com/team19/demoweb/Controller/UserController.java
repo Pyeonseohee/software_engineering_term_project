@@ -101,7 +101,6 @@ public class UserController {
         if(!dto.getPw().equals(user.getPw())) return"Password Incorrect";
         //유저 삭제
         userRepository.delete(user);
-        System.out.println("test");
         return "Sign out succeeded";
     }
     //비밀번호 변경
