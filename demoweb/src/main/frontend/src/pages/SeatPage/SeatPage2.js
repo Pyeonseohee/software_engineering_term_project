@@ -40,27 +40,34 @@ function SeatPage2() {
             gap: "8px", // 버튼 사이의 간격을 10px로 지정 (선택 사항)
           }}
         >
-          {Array.from({ length: 90 }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => handleButtonClick(index)}
-              onDoubleClick={() => handleButtonDoubleClick(index)}
-              style={{
-                width: "100%",
-                height: "100%",
-                backgroundColor: selectedButtons.includes(index)
-                  ? "#1B9C85"
-                  : "#F0F0F0",
-                border: "none",
-              }}
-            >
-              {selectedButtons.includes(index) ? (
-                <BiChair className="icon" size="40px" color="black" />
-              ) : (
-                <BiPlus className="icon" size="20px" color="black" />
-              )}
-            </button>
-          ))}
+          {Array.from(
+            { length: 90 },
+            (
+              _,
+              index // 버튼 개수가 length
+            ) => (
+              <button
+                key={index}
+                onClick={() => handleButtonClick(index)}
+                onDoubleClick={() => handleButtonDoubleClick(index)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  // 선택했는지 아닌지에 따라 색깔 바뀜
+                  backgroundColor: selectedButtons.includes(index)
+                    ? "#1B9C85"
+                    : "#F0F0F0",
+                  border: "none",
+                }}
+              >
+                {selectedButtons.includes(index) ? (
+                  <BiChair className="icon" size="40px" color="black" />
+                ) : (
+                  <BiPlus className="icon" size="20px" color="black" />
+                )}
+              </button>
+            )
+          )}
         </div>
       </div>
     </div>

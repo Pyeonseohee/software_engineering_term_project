@@ -58,7 +58,7 @@ function LoginPage(props) {
             title: "로그인 되었습니다!",
             icon: "success",
           }).then(function () {
-            navigate("/owner", { state: { UserSession: session } });
+            navigate("/Ownerpage", { state: { UserSession: session } });
           });
           // const bytes = CryptoJS.AES.decrypt(res.data, secretKey);
           // const original = bytes.toString(CryptoJS.enc.Utf8);
@@ -81,17 +81,6 @@ function LoginPage(props) {
       })
       .catch((error) => {
         console.log(error);
-      });
-    const getData = {
-      session: session,
-      pw: Password,
-    };
-    axios
-      .post(SessionURL, JSON.stringify(getData), {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        console.log(res);
       });
   };
 
