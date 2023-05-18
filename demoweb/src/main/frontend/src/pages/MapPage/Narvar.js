@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Navbar, Dropdown, Nav } from "react-bootstrap";
 import { BiUserCircle, BiCoffeeTogo } from "react-icons/bi";
 import "./mapPage.css";
 
+var session = "";
 const Narvar = (props) => {
+  const navigate = useNavigate();
   // 현재 route 정보
   const location = useLocation().pathname;
   var isLogin; // 로그인 했는지
-  if (props.user == undefined) isLogin = false; // 세션이 undefined이면 로그인X
+  session = props.user;
+  if (session == undefined) isLogin = false; // 세션이 undefined이면 로그인X
   else isLogin = true;
   return (
     <Navbar className="topNarvar" variant="dark">
@@ -16,15 +19,30 @@ const Narvar = (props) => {
       <Navbar.Brand href="/">Cafe</Navbar.Brand>
       {isLogin ? (
         <Nav className="me-auto">
-          <Nav.Link href="/owner" active={location == "/owner" ? true : false}>
+          <Nav.Link
+            onClick={() =>
+              navigate("/Ownerpage", { state: { userSession: session } })
+            }
+            active={location == "/Ownerpage" ? true : false}
+          >
             내 매장
           </Nav.Link>
           <Nav.Link href="/register">좌석 관리</Nav.Link>
           <Nav.Link href="/register">제품 관리</Nav.Link>
-          <Nav.Link href="/seat2" active={location == "/seat2" ? true : false}>
+          <Nav.Link
+            href="/register"
+            active={location == "/seat2" ? true : false}
+          >
             좌석 배치
           </Nav.Link>
-          <Nav.Link href="/register">내 정보</Nav.Link>
+          <Nav.Link
+            onClick={() =>
+              navigate("/userInfo", { state: { userSession: session } })
+            }
+            active={location == "/userInfo" ? true : false}
+          >
+            내 정보
+          </Nav.Link>
         </Nav>
       ) : (
         <Nav className="me-auto">

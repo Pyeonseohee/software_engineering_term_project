@@ -10,6 +10,7 @@ import FindPwdPage from "./pages/FindPwdPage/FindPwdPage";
 import CafeOwnerPage from "./pages/CafeOwnerPage/CafeOwnerPage";
 import SeatPage from "./pages/SeatPage/SeatPage";
 import SeatPage2 from "./pages/SeatPage/SeatPage2";
+import UserInfo from "./pages/UserInfo/UserInfo";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/seat" element={<SeatPage />} />
           <Route path="/seat2" element={<SeatPage2 />} />
           <Route path="/Ownerpage" element={<CafeOwnerPage />} />
+          <Route path="/userInfo" element={<UserInfo />} />
         </Routes>
       </BrowserRouter>
     </div>

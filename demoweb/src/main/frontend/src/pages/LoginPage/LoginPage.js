@@ -13,6 +13,7 @@ import "./button.css";
 const LoginURL = "http://localhost:8080/api/login";
 const SessionURL = "http://localhost:8080/api/userinfo";
 var session = "";
+
 function LoginPage(props) {
   const navigate = useNavigate();
   const [Email, setEmail] = useState("");
@@ -58,7 +59,7 @@ function LoginPage(props) {
             title: "로그인 되었습니다!",
             icon: "success",
           }).then(function () {
-            navigate("/Ownerpage", { state: { UserSession: session } });
+            navigate("/Ownerpage", { state: { userSession: session } });
           });
           // const bytes = CryptoJS.AES.decrypt(res.data, secretKey);
           // const original = bytes.toString(CryptoJS.enc.Utf8);
