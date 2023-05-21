@@ -11,6 +11,7 @@ import CafeOwnerPage from "./pages/CafeOwnerPage/CafeOwnerPage";
 import SeatPage from "./pages/SeatPage/SeatPage";
 import SeatPage2 from "./pages/SeatPage/SeatPage2";
 import UserInfo from "./pages/UserInfo/UserInfo";
+import ProductManagement from "./pages/ProductManagement/ProductManagement";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/seat2" element={<SeatPage2 />} />
           <Route path="/Ownerpage" element={<CafeOwnerPage />} />
           <Route path="/userInfo" element={<UserInfo />} />
+          <Route path="/ProductManagement" element={<ProductManagement/>}/>
         </Routes>
       </BrowserRouter>
     </div>
