@@ -1,9 +1,6 @@
 package com.team19.demoweb.Controller;
 
-import com.team19.demoweb.dto.SetStoreRequestDto;
-import com.team19.demoweb.dto.SeatInfoRequestDto;
-import com.team19.demoweb.dto.StoreInfoRequestDto;
-import com.team19.demoweb.dto.PurchaseOnSeatRequestDto;
+import com.team19.demoweb.dto.*;
 import com.team19.demoweb.entity.*;
 import com.team19.demoweb.repository.ItemRepository;
 import com.team19.demoweb.repository.SeatRepository;
@@ -46,13 +43,29 @@ public class StoreController {
         */
 
         //store정보 기반으로 객체 생성후, user와 관계 설정 후 저장
-        Store store = new Store(user, dto.getName(), dto.getSeatCnt());
+        Store store = new Store(user, dto.getName());
         storeRepository.save(store);
-        for (int i = 0; i < dto.getSeatCnt(); i++) {
-            Seat seat = new Seat(i+1, store, true);
-            seatRepository.save(seat);
-        }
+//        for (int i = 0; i < dto.getSeatCnt(); i++) {
+//            Seat seat = new Seat(i+1, store, true);
+//            seatRepository.save(seat);
+//        }
         return "Store information setting Sucessful";
+    }
+    
+    @PostMapping("/api/setseat")
+    public String setStore(@RequestBody SetSeatRequestDto[] dto) {
+        User user;
+        for (int i = 1; i <= dto.length; i++) {
+            try {
+                user = userController.checkSession(dto[i].getSession());
+            } catch (Exception e) {
+                return "Invalid Session";
+            }
+            
+            //session, List<x, y>
+            
+        }
+        return "아직개발중";
     }
     //store정보 클라에 제공
     @PostMapping("/api/storeinfo")

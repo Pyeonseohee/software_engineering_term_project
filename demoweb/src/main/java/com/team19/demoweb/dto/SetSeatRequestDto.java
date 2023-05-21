@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SetStoreRequestDto {
+public class SetSeatRequestDto {
     private String session;
     private String name;
+    private float x;
+    private float y;
 }

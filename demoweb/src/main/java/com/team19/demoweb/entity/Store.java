@@ -9,7 +9,7 @@ import lombok.Builder;
 @Entity
 @Setter
 @Getter
-@Builder
+
 @NoArgsConstructor
 public class Store {
     @Id // primary key
@@ -21,13 +21,10 @@ public class Store {
     private User user;
     @Column(name = "name")
     private String name;
-    @Column(name = "seat_num")
-    private int seatCnt;
 
     @Builder
-    public Store(User user, String name, int seatCnt) {
+    public Store(User user, String name) {
         this.user = user;
-        this.name = name;
-        this.seatCnt = seatCnt;
+        this.name = name;;
     }
 }
