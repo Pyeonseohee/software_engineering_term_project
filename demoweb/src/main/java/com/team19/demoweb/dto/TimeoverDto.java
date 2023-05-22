@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SeatInfoRequestDto {
+public class TimeoverDto {
     private String session;
     private String name;
+    private int seatnum;
 }

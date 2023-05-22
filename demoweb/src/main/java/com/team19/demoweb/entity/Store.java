@@ -9,17 +9,14 @@ import lombok.Builder;
 @Entity
 @Setter
 @Getter
-
+@IdClass(StorePK.class)
 @NoArgsConstructor
 public class Store {
-    @Id // primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "id")
     private User user;
-    @Column(name = "name")
+    @Id
     private String name;
 
     @Builder

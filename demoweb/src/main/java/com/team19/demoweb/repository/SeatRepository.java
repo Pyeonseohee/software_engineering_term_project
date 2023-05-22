@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findAllByStore(Store store);
+    Seat findAllByStoreAndSeatnum(Store store, int Seatnum);
 }

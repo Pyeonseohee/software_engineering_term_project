@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
-    public Store findByUser(User user); // 유저를 활용하여 매장 검색
+    Store findByUser(User user); // 유저를 활용하여 매장 검색
+    Store findByNameAndUser(String name, User user);
 }

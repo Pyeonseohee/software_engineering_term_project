@@ -52,35 +52,21 @@ public class StoreController {
         return "Store information setting Sucessful";
     }
     
-    @PostMapping("/api/setseat")
-    public String setStore(@RequestBody SetSeatRequestDto[] dto) {
-        User user;
-        for (int i = 1; i <= dto.length; i++) {
-            try {
-                user = userController.checkSession(dto[i].getSession());
-            } catch (Exception e) {
-                return "Invalid Session";
-            }
-            
-            //session, List<x, y>
-            
-        }
-        return "아직개발중";
-    }
-    //store정보 클라에 제공
-    @PostMapping("/api/storeinfo")
-    public Store getStore(@RequestBody StoreInfoRequestDto dto) {
-        //session 검증
+    @PostMapping("/api/setseat")//seat 생성
+    public String setStore(@RequestBody SetSeatRequestDto dto) {
         User user;
         try {
             user = userController.checkSession(dto.getSession());
         } catch (Exception e) {
-            return null;
-        } 
-        // user와 연결된 store 검색 후 반환
-        Store store = storeRepository.findByUser(user);
-        return store;
+            return "Invalid Session";
+        }
+        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
+        Seat seat = new Seat(store, dto.getSeatnum(), dto.getX(), dto.getY());
+        seatRepository.save(seat);
+        
+        return "Success";
     }
+    
     //해당 store의 전체 seat정보 제공
     @PostMapping("/api/seatinfo")
     public List<Seat> getseatInfo(@RequestBody SeatInfoRequestDto dto) {
@@ -92,11 +78,59 @@ public class StoreController {
             return null;
         }
         //user와 조인된 store 정보를 기반으로 전체 seat정보 반환
-        return seatRepository.findAllByStore(storeRepository.findByUser(user));
+        return seatRepository.findAllByStore(storeRepository.findByNameAndUser(dto.getName(), user));
     }
-    //주문 정보=seatInfo, 어느가게의 몇번좌석에서 무슨음료샀는지  클라이언트가보냄
+    
+    //어느가게의 몇번좌석에서 무슨음료샀는지 클라이언트가보내면
     @PostMapping("/api/setpurchase")
-    public String purchaseOnSeat(@RequestBody PurchaseOnSeatRequestDto dto) {
+    public int purchaseOnSeat(@RequestBody PurchaseOnSeatRequestDto dto) {
+        //session 검증
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return 0;
+        }
+        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
+        Seat seat = seatRepository.findAllByStoreAndSeatnum(store, dto.getSeatnum());
+        seat.setAvailable(false);
+        seatRepository.save(seat);//좌석현황최신화
+        Item item = itemRepository.findByStoreAndName(store, dto.getItem());
+        return item.getTime();
+    }
+    
+    @PostMapping("/api/timeover")//좌석시간 끝난거 받음
+    public String putseatInfo(@RequestBody TimeoverDto dto) {
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return null;
+        }
+        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
+        Seat seat = seatRepository.findAllByStoreAndSeatnum(store, dto.getSeatnum());
+        seat.setAvailable(true);
+        seatRepository.save(seat);//좌석현황최신화
+        return  "Success";
+    }
+    
+    @PostMapping("/api/additem")
+    public String additem(@RequestBody AddItemDto dto) {
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return null;
+        }
+        Store store = storeRepository.findByNameAndUser(dto.getStorename(), user);
+        Item item = new Item(store, dto.getItemname(), dto.getPrice(), dto.getTime());
+        itemRepository.save(item);
+        return "Add item success";
+    }
+    
+    //store정보 클라에 제공, 필요없을시삭제
+    @PostMapping("/api/storeinfo")
+    public Store getStore(@RequestBody StoreInfoRequestDto dto) {
         //session 검증
         User user;
         try {
@@ -104,13 +138,8 @@ public class StoreController {
         } catch (Exception e) {
             return null;
         }
-        Seat seat = dto.getSeat();
-        seat.setItem(dto.getItem());
-        seat.setTime(itemRepository.findByName(dto.getItem()).getTime());
-        return "";
+        // user와 연결된 store 검색 후 반환
+        Store store = storeRepository.findByUser(user);
+        return store;
     }
-    
-    /*@PutMapping("/api/seatInfo")//좌석시간 끝난거 받음
-    public Seat putseatInfo(@RequestBody Seat seat) {
-    }*/
 }
