@@ -12,6 +12,7 @@ import SeatPage from "./pages/SeatPage/SeatPage";
 import SeatPage2 from "./pages/SeatPage/SeatPage2";
 import UserInfo from "./pages/UserInfo/UserInfo";
 import ProductManagement from "./pages/ProductManagement/ProductManagement";
+import TestSeat from "./pages/SeatPage/TestSeat";
 
 function App() {
   return (
@@ -23,9 +24,10 @@ function App() {
           <Route path="/findPwd" element={<FindPwdPage />} />
           <Route path="/seat" element={<SeatPage />} />
           <Route path="/seat2" element={<SeatPage2 />} />
+          <Route path="/seat3" element={<TestSeat />} />
           <Route path="/Ownerpage" element={<CafeOwnerPage />} />
           <Route path="/userInfo" element={<UserInfo />} />
-          <Route path="/ProductManagement" element={<ProductManagement/>}/>
+          <Route path="/ProductManagement" element={<ProductManagement />} />
         </Routes>
       </BrowserRouter>
     </div>
