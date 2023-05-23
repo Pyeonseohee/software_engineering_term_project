@@ -60,10 +60,10 @@ public class StoreController {
         } catch (Exception e) {
             return "Invalid Session";
         }
-        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
-        Seat seat = new Seat(store, dto.getSeatnum(), dto.getX(), dto.getY());
+        StorePK storePK = new StorePK(user, dto.getName());
+        Optional<Store> store = storeRepository.findById(storePK);
+        Seat seat = new Seat(store.get(), dto.getSeatnum(), dto.getX(), dto.getY());
         seatRepository.save(seat);
-        
         return "Success";
     }
     
@@ -75,8 +75,9 @@ public class StoreController {
         } catch (Exception e) {
             return "Invalid Session";
         }
-        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
-        Seat seat = new Seat(store, dto.getSeatnum());
+        StorePK storePK = new StorePK(user, dto.getName());
+        Optional<Store> store = storeRepository.findById(storePK);
+        Seat seat = new Seat(store.get(), dto.getSeatnum());
         seatRepository.delete(seat);
         return "Success";
     }
@@ -92,7 +93,9 @@ public class StoreController {
             return null;
         }
         //user와 조인된 store 정보를 기반으로 전체 seat정보 반환
-        return seatRepository.findAllByStore(storeRepository.findByNameAndUser(dto.getName(), user));
+        StorePK storePK = new StorePK(user, dto.getName());
+        Optional<Store> store = storeRepository.findById(storePK);
+        return seatRepository.findAllByStore(store.get());
     }
     
     //어느가게의 몇번좌석에서 무슨음료샀는지 클라이언트가보내면
@@ -105,11 +108,12 @@ public class StoreController {
         } catch (Exception e) {
             return 0;
         }
-        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
-        Seat seat = seatRepository.findAllByStoreAndSeatnum(store, dto.getSeatnum());
+        StorePK storePK = new StorePK(user, dto.getName());
+        Optional<Store> store = storeRepository.findById(storePK);
+        Seat seat = seatRepository.findAllByStoreAndSeatnum(store.get(), dto.getSeatnum());
         seat.setAvailable(false);
         seatRepository.save(seat);//좌석현황최신화
-        Item item = itemRepository.findByStoreAndName(store, dto.getItem());
+        Item item = itemRepository.findByStoreAndName(store.get(), dto.getItem());
         return item.getTime();
     }
     
@@ -121,8 +125,9 @@ public class StoreController {
         } catch (Exception e) {
             return null;
         }
-        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
-        Seat seat = seatRepository.findAllByStoreAndSeatnum(store, dto.getSeatnum());
+        StorePK storePK = new StorePK(user, dto.getName());
+        Optional<Store> store = storeRepository.findById(storePK);
+        Seat seat = seatRepository.findAllByStoreAndSeatnum(store.get(), dto.getSeatnum());
         seat.setAvailable(true);
         seatRepository.save(seat);//좌석현황최신화
         return  "Success";
@@ -136,8 +141,9 @@ public class StoreController {
         } catch (Exception e) {
             return null;
         }
-        Store store = storeRepository.findByNameAndUser(dto.getStorename(), user);
-        Item item = new Item(store, dto.getItemname(), dto.getPrice(), dto.getTime());
+        StorePK storePK = new StorePK(user, dto.getStorename());
+        Optional<Store> store = storeRepository.findById(storePK);
+        Item item = new Item(store.get(), dto.getItemname(), dto.getPrice(), dto.getTime());
         itemRepository.save(item);
         return "Add item success";
     }
@@ -154,7 +160,7 @@ public class StoreController {
         }
         // user와 연결된 store 검색 후 반환
         List<Store> store = storeRepository.findByUser(user);
-        List<String> name = null;
+        List<String> name = new ArrayList<>();
         for (int i = 0; i < store.size(); i++) {
             name.add(store.get(i).getName());
             
