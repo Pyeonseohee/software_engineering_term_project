@@ -28,4 +28,9 @@ public class Seat {
         this.x = x;
         this.y = y;
     }
+    
+    public Seat(Store store, int seatnum) {
+        this.store = store;
+        this.seatnum = seatnum;
+    }
 }
