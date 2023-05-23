@@ -14,17 +14,18 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "store_name", referencedColumnName = "name")
     private Store store;
     @Column
     private boolean available;
-    private String item;//아이템 아이템 참조
     private int seatnum;
-    private int time;//아이템 타임 참조
+    private float x;
+    private float y;
     
-    public Seat(int seatnum, Store store, boolean available) {
-        this.seatnum = seatnum;
+    public Seat(Store store, int seatnum, float x, float y) {
         this.store = store;
-        this.available = available;
+        this.seatnum = seatnum;
+        this.x = x;
+        this.y = y;
     }
 }

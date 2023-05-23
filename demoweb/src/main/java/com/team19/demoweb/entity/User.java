@@ -9,7 +9,6 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-@Builder
 @NoArgsConstructor
 public class User { // table 역할
     @Id // primary key

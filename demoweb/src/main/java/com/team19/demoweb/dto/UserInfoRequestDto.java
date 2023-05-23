@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserInfoRequestDto {
     private String session;
-    private String pw;
 }

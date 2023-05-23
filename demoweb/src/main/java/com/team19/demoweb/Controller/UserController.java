@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @CrossOrigin("http://localhost:3000")
 @Controller
 @RestController
@@ -47,14 +49,17 @@ public class UserController {
     //로그인
     @PostMapping("/api/login")
     public String loginV2(@RequestBody UserLogInRequestDto dto){
-        User user = userRepository.findByEmail(dto.getEmail());
+        Optional<User> user = userRepository.findByEmail(dto.getEmail());
         System.out.println("----------\n");
-        System.out.println(user.getPw());
+        System.out.println(user.get().getPw());
         System.out.println(dto.getPw());
-        if(user.getPw().equals(dto.getPw())){
+        if(user.isEmpty()){//존재하지 않는 유저(이메일)일때
+            return "sign up first";
+        }
+        if(user.get().getPw().equals(dto.getPw())){
             //세션 생성 및 유저에게 부여
-            return sessionMemory.createSession(user);
-        }else{
+            return sessionMemory.createSession(user.get());
+        }else{//비밀번호가 틀릴때
             return "login fail";
         }
     }
@@ -83,7 +88,6 @@ public class UserController {
         } catch (Exception e) {
             return null;
         }
-        if(!dto.getPw().equals(user.getPw())) return null;
         //유저 객체 반환
         return user;
     }

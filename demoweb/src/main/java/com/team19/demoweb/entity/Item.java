@@ -14,7 +14,7 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "store_name", referencedColumnName = "name")
     private Store store;
     @Column (name = "name")
     private String name;
@@ -22,4 +22,11 @@ public class Item {
     private int price;
     @Column
     private int time;
+    
+    public Item(Store store, String name, int price, int time) {
+        this.store = store;
+        this.name = name;
+        this.price = price;
+        this.time = time;
+    }
 }

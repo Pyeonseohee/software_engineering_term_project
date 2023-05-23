@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SeatInfoRequestDto {
+public class SetSeatRequestDto {
     private String session;
     private String name;
+    private int seatnum;
+    private float x;
+    private float y;
 }

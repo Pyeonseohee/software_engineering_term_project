@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class SetStoreRequestDto {
     private String session;
     private String name;
-    private int seatCnt;
 }

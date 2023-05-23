@@ -9,25 +9,19 @@ import lombok.Builder;
 @Entity
 @Setter
 @Getter
-@Builder
+@IdClass(StorePK.class)
 @NoArgsConstructor
 public class Store {
-    @Id // primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "id")
     private User user;
-    @Column(name = "name")
+    @Id
     private String name;
-    @Column(name = "seat_num")
-    private int seatCnt;
 
     @Builder
-    public Store(User user, String name, int seatCnt) {
+    public Store(User user, String name) {
         this.user = user;
-        this.name = name;
-        this.seatCnt = seatCnt;
+        this.name = name;;
     }
 }

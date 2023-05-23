@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PurchaseOnSeatRequestDto {
     private String session;
-    private Seat seat;
+    private String name;
+    private int seatnum;
     private String item;
 }
