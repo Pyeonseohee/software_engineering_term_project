@@ -53,7 +53,7 @@ public class StoreController {
     }
     
     @PostMapping("/api/setseat")//seat 생성
-    public String setStore(@RequestBody SetSeatRequestDto dto) {
+    public String setSeat(@RequestBody SetSeatRequestDto dto) {
         User user;
         try {
             user = userController.checkSession(dto.getSession());
@@ -64,6 +64,20 @@ public class StoreController {
         Seat seat = new Seat(store, dto.getSeatnum(), dto.getX(), dto.getY());
         seatRepository.save(seat);
         
+        return "Success";
+    }
+    
+    @DeleteMapping("/api/setseat")//seat 제거
+    public String deleteSeat(@RequestBody DeleteSeatDto dto) {
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return "Invalid Session";
+        }
+        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
+        Seat seat = new Seat(store, dto.getSeatnum());
+        seatRepository.delete(seat);
         return "Success";
     }
     
@@ -100,7 +114,7 @@ public class StoreController {
     }
     
     @PostMapping("/api/timeover")//좌석시간 끝난거 받음
-    public String putseatInfo(@RequestBody TimeoverDto dto) {
+    public String endseatInfo(@RequestBody TimeoverDto dto) {
         User user;
         try {
             user = userController.checkSession(dto.getSession());
@@ -128,9 +142,9 @@ public class StoreController {
         return "Add item success";
     }
     
-    //store정보 클라에 제공, 필요없을시삭제
+    //유저에 따른 store정보 클라에 제공
     @PostMapping("/api/storeinfo")
-    public Store getStore(@RequestBody StoreInfoRequestDto dto) {
+    public List<String> getStore(@RequestBody StoreInfoRequestDto dto) {
         //session 검증
         User user;
         try {
@@ -139,7 +153,12 @@ public class StoreController {
             return null;
         }
         // user와 연결된 store 검색 후 반환
-        Store store = storeRepository.findByUser(user);
-        return store;
+        List<Store> store = storeRepository.findByUser(user);
+        List<String> name = null;
+        for (int i = 0; i < store.size(); i++) {
+            name.add(store.get(i).getName());
+            
+        }
+        return name;
     }
 }
