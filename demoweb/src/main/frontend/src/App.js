@@ -12,6 +12,7 @@ import SeatPage from "./pages/SeatPage/SeatPage";
 import SeatPage2 from "./pages/SeatPage/SeatPage2";
 import UserInfo from "./pages/UserInfo/UserInfo";
 import ProductManagement from "./pages/ProductManagement/ProductManagement";
+import SeatManagementPage from "./pages/SeatPage/SeatManagementPage";
 import TestSeat from "./pages/SeatPage/TestSeat";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/Ownerpage" element={<CafeOwnerPage />} />
           <Route path="/userInfo" element={<UserInfo />} />
           <Route path="/ProductManagement" element={<ProductManagement />} />
+          <Route path="/seatManage" element={<SeatManagementPage />} />
         </Routes>
       </BrowserRouter>
     </div>

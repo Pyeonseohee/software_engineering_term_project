@@ -1,23 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Dropdown, DropdownButton, Overlay, Popover } from "react-bootstrap";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { AiFillPlusCircle } from "react-icons/ai";
 import Narvar from "../MapPage/Narvar";
 import axios from "axios";
 
-const SetSeatURL = "http://localhost:8080/api/setseat";
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
 const StoreInfoURL = "http://localhost:8080/api/storeinfo";
+const SetStoreURL = "http://localhost:8080/api/setstore";
+const SetPurchaseURL = "http://localhost:8080/api/setpurchase";
 
-function SeatPage() {
-  var test = "메가커피";
-  const [userSession, setUserSession] = useState("");
+function SeatManagementPage() {
   const ref = useRef(null);
+  var test = "메가커피";
+  const [using, setUsing] = useState(false);
+  const [userSession, setUserSession] = useState("");
   const [storeName, setStoreName] = useState(""); // 어떤 매장인지에 따라
-  const [isDragging, setIsDragging] = useState(false); // 드래깅 여부
-  const [draggingButton, setDraggingButton] = useState(null); // 드래깅 버튼
-  const [buttonCount, setButtonCount] = useState(0); // 버튼 몇 개 있는지
-  const [buttons, setButtons] = useState([]); // 버튼 list
+  const [target, setTarget] = useState(null);
+  const [show, setShow] = useState(false);
+  const [buttonCount, setButtonCount] = useState(0);
+  const [buttons, setButtons] = useState([]);
   const [storeList, setStoreList] = useState([]); // 매장 list
 
   // user session 받아오는 부분
@@ -27,9 +28,8 @@ function SeatPage() {
   useEffect(() => {
     setUserSession(UserInfo.userSession);
     fetchData();
-  }, []);
+  });
 
-  // 저장된 좌석 정보 받아오기
   const fetchData = async () => {
     const data = {
       session: userSession,
@@ -44,75 +44,42 @@ function SeatPage() {
       });
   };
 
-  // 버튼을 드래그하여 옮길 때
-  const handleMouseDown = (event, buttonId) => {
-    setIsDragging(true);
-    setDraggingButton(buttonId);
-  };
-
-  // 마우스 움직일 때
-  const handleMouseMove = (event) => {
-    if (isDragging) {
-      const updatedButtons = buttons.map((button) => {
-        if (button.id === draggingButton) {
-          return {
-            ...button,
-            x: event.clientX,
-            y: event.clientY,
-          };
-        }
-        return button;
-      });
-      setButtons(updatedButtons);
-    }
-  };
-
-  // drag하고 mouse 땔 때
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    setDraggingButton(null);
-  };
-
-  // 좌석 추가버튼
-  const handleAddButtonClick = () => {
-    if (!isDragging) {
-      const newButton = {
-        id: buttonCount,
-        x: 150,
-        y: 150,
-      };
-      setButtonCount(buttonCount + 1);
-      setButtons([...buttons, newButton]);
-    }
-  };
-
-  // 두 번 누르면 좌석 삭제
-  const handleButtonDoubleClick = (buttonId) => {
-    if (!isDragging) {
-      const updatedButtons = buttons.filter((button) => button.id !== buttonId);
-      setButtons(updatedButtons);
-      setButtonCount(buttonCount - 1);
-    }
-  };
-
-  // 배치완료되면 데이터 seat의 데이터 보낼거임.
-  const handleSendSeatInfo = (event, buttonId) => {
-    console.log(buttonId, event.clientX, event.clientY);
+  //나중에 좌석 관리 페이지에 쓰일 함수(오른쪽 누르면 좌석 번호, 메뉴, )
+  const handleRightClick = (event, buttonId) => {
+    event.preventDefault();
+    console.log(buttonId);
     const data = {
       session: userSession,
-      name: "메가커피",
-      seatnum: buttonId,
-      x: event.clientX,
-      y: event.clientY,
+      name: test,
     };
-    console.log(JSON.stringify(data));
     axios
-      .post(SetSeatURL, JSON.stringify(data), {
+      .post(SeatInfoURL, JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        console.log(res);
+        const use = res.data[buttonId - 1].available;
+        console.log(use);
+
+        // 좌석이 사용중이라면
+        if (use == true) {
+          setUsing(use);
+        } else {
+          // 좌석이 비어있다면
+          //   console.log(use);
+          //   const data = {
+          //     session: userSession,
+          //     name: test,
+          //     seatnum: buttonId,
+          //   };
+          //   axios
+          //     .post(SetPurchaseURL, JSON.stringify(data), {
+          //       headers: { "Content-Type": "application/json" },
+          //     })
+          //     .then((res) => {});
+        }
       });
+    setShow(!show);
+    setTarget(event.target);
   };
 
   // 드롭다운에서 store정보 받아오는 부분
@@ -149,8 +116,6 @@ function SeatPage() {
           width: "100%",
           height: "100vh",
         }}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
       >
         <div
           style={{ margin: "20px", display: "flex", justifyContent: "center" }}
@@ -167,17 +132,6 @@ function SeatPage() {
             ))}
           </DropdownButton>
         </div>
-        <button
-          className="seatButton"
-          style={{
-            margin: "50px",
-            border: "none",
-            backgroundColor: "transparent",
-          }}
-          onClick={handleAddButtonClick}
-        >
-          <AiFillPlusCircle className="icon" size="70px" color="black" />
-        </button>
         {buttons &&
           buttons.map((button) => (
             <button
@@ -191,16 +145,39 @@ function SeatPage() {
                 height: "70px",
                 backgroundColor: "#F0F0F0",
               }}
-              onMouseDown={(event) => handleMouseDown(event, button.id)}
-              onDoubleClick={() => handleButtonDoubleClick(button.id)}
-              onMouseUp={(event) => handleSendSeatInfo(event, button.id)}
+              onContextMenu={(event) => handleRightClick(event, button.id)}
             >
               {button.id}
             </button>
           ))}
+        <Overlay
+          show={show}
+          target={target}
+          placement="bottom"
+          container={ref}
+          containerPadding={20}
+        >
+          {using ? (
+            <Popover id="popover-contained">
+              <Popover.Header as="h3">사용중..</Popover.Header>
+              <Popover.Body>
+                <strong>Holy guacamole!</strong> Check this info.
+              </Popover.Body>
+            </Popover>
+          ) : (
+            <Popover id="popover-contained">
+              <Popover.Header as="h3">비어있는 좌석</Popover.Header>
+              <Popover.Body style="fontSize: 24px">
+                <strong>메뉴를 선택해주세요</strong>
+                <br />
+                dsds
+              </Popover.Body>
+            </Popover>
+          )}
+        </Overlay>
       </div>
     </div>
   );
 }
 
-export default SeatPage;
+export default SeatManagementPage;
