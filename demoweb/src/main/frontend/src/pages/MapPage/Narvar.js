@@ -27,7 +27,14 @@ const Narvar = (props) => {
           >
             내 매장
           </Nav.Link>
-          <Nav.Link href="/register">좌석 관리</Nav.Link>
+          <Nav.Link
+            onClick={() =>
+              navigate("/seatManage", { state: { userSession: session } })
+            }
+            active={location == "/seatManage" ? true : false}
+          >
+            좌석 관리
+          </Nav.Link>
           <Nav.Link href="/register">제품 관리</Nav.Link>
           <Nav.Link
             onClick={() =>

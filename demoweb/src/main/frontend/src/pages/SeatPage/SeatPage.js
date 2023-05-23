@@ -7,8 +7,10 @@ import axios from "axios";
 
 const SetSeatURL = "http://localhost:8080/api/setseat";
 const SetStoreURL = "http://localhost:8080/api/setstore";
+const SeatInfoURL = "http://localhost:8080/api/seatinfo";
 
 function SeatPage() {
+  var test = "메가커피";
   const [userSession, setUserSession] = useState("");
   const ref = useRef(null);
   const [target, setTarget] = useState(null);
@@ -19,15 +21,27 @@ function SeatPage() {
   const [buttons, setButtons] = useState([]);
 
   // user session 받아오는 부분
+  // 저장했던 버튼의 위치정보 받아 다시 rendering
   const location = useLocation();
   const UserInfo = { ...location.state };
   useEffect(() => {
     setUserSession(UserInfo.userSession);
+    fetchData();
   });
-  // 저장했던 버튼의 위치정보 받아 다시 rendering
-  //   useEffect(() => {
-  //     fetchButtonPositions();
-  //   }, []);
+
+  const fetchData = async () => {
+    const data = {
+      session: userSession,
+      name: test,
+    };
+    axios
+      .post(SeatInfoURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        setButtons(res.data);
+      });
+  };
 
   // 버튼을 드래그하여 옮길 때
   const handleMouseDown = (event, buttonId) => {
