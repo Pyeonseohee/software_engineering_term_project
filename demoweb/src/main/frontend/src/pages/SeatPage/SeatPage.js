@@ -6,6 +6,7 @@ import Narvar from "../MapPage/Narvar";
 import axios from "axios";
 
 const SetSeatURL = "http://localhost:8080/api/setseat";
+const SetStoreURL = "http://localhost:8080/api/setstore";
 
 function SeatPage() {
   const [userSession, setUserSession] = useState("");
@@ -56,19 +57,6 @@ function SeatPage() {
     setIsDragging(false);
     setDraggingButton(null);
     // Save button positions to the server
-    saveButtonPositions();
-  };
-
-  // 자리 데이터 보냄
-  const saveButtonPositions = () => {
-    // axios
-    //   .post("/api/buttons", buttons)
-    //   .then((response) => {
-    //     console.log("Button positions saved to the server:", response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Failed to save button positions:", error);
-    //   });
   };
 
   const handleAddButtonClick = () => {
@@ -81,6 +69,18 @@ function SeatPage() {
       setButtonCount(buttonCount + 1);
       setButtons([...buttons, newButton]);
     }
+
+    const data = {
+      session: userSession,
+      name: "메가커피",
+    };
+    axios
+      .post(SetStoreURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res);
+      });
   };
 
   const handleButtonDoubleClick = (buttonId) => {
@@ -96,7 +96,7 @@ function SeatPage() {
     console.log(buttonId, event.clientX, event.clientY);
     const data = {
       session: userSession,
-      name: "이디야",
+      name: "메가커피",
       seatnum: buttonId,
       x: event.clientX,
       y: event.clientY,

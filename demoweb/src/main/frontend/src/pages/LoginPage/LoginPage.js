@@ -48,7 +48,12 @@ function LoginPage(props) {
         // 아이디가 존재하지 않으면
         if (res.data == "login fail") {
           new Swal({
-            title: "존재하지 않는 아이디입니다.",
+            title: "비밀번호가 일치하지 않습니다.",
+            icon: "error",
+          });
+        } else if (res.data == "sign up first") {
+          new Swal({
+            title: "존재하지 않는 회원입니다. 회원가입부터 해주세요",
             icon: "warning",
           });
         } else {

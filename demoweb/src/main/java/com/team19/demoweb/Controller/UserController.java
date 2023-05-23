@@ -37,7 +37,7 @@ public class UserController {
         //유저 객체 생성
         User user = new User(dto.getEmail(), dto.getPw(), dto.getName());
         //유저 아이디가 중복되지 않을 시
-        if(userRepository.findByEmail(user.getEmail())==null){ 
+        if(userRepository.findByEmail(user.getEmail()).isEmpty()){ 
             //유저 객체 레포지토리에 저장
             userRepository.save(user);
             return "Sign in complete";
