@@ -31,9 +31,9 @@ const Narvar = (props) => {
           <Nav.Link href="/register">제품 관리</Nav.Link>
           <Nav.Link
             onClick={() =>
-              navigate("/seat2", { state: { userSession: session } })
+              navigate("/seat", { state: { userSession: session } })
             }
-            active={location == "/seat2" ? true : false}
+            active={location == "/seat" ? true : false}
           >
             좌석 배치
           </Nav.Link>
