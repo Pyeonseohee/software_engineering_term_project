@@ -5,18 +5,21 @@ import Narvar from "../MapPage/Narvar";
 import axios from "axios";
 
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
+const StoreInfoURL = "http://localhost:8080/api/storeinfo";
 const SetStoreURL = "http://localhost:8080/api/setstore";
 const SetPurchaseURL = "http://localhost:8080/api/setpurchase";
 
 function SeatManagementPage() {
+  const ref = useRef(null);
   var test = "메가커피";
   const [using, setUsing] = useState(false);
   const [userSession, setUserSession] = useState("");
-  const ref = useRef(null);
+  const [storeName, setStoreName] = useState(""); // 어떤 매장인지에 따라
   const [target, setTarget] = useState(null);
   const [show, setShow] = useState(false);
   const [buttonCount, setButtonCount] = useState(0);
   const [buttons, setButtons] = useState([]);
+  const [storeList, setStoreList] = useState([]); // 매장 list
 
   // user session 받아오는 부분
   // 저장했던 버튼의 위치정보 받아 다시 rendering
@@ -79,6 +82,31 @@ function SeatManagementPage() {
     setTarget(event.target);
   };
 
+  // 드롭다운에서 store정보 받아오는 부분
+  const StoreList = () => {
+    var tmpStoreList = [];
+    const data = {
+      session: userSession,
+    };
+    axios
+      .post(StoreInfoURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        // db에서 가져온 storelist.
+        for (var i = 0; i < res.data.length; i++) {
+          tmpStoreList[i] = res.data[i];
+        }
+        setStoreList(tmpStoreList);
+      });
+  };
+
+  // 드롭다운에서 store 이름 눌렀을 때 실행되는 함수.
+  const storeSelect = (storeName) => {
+    console.log("-------", storeName);
+    setStoreName(storeName);
+  };
+
   return (
     <div>
       <Narvar user={userSession}></Narvar>
@@ -93,13 +121,15 @@ function SeatManagementPage() {
           style={{ margin: "20px", display: "flex", justifyContent: "center" }}
         >
           <DropdownButton
-            width="200px"
             id="dropdown-basic-button"
             title="매장을 선택하세요 "
+            onClick={StoreList}
           >
-            <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+            {storeList.map((storeName, index) => (
+              <Dropdown.Item key={index} onClick={() => storeSelect(storeName)}>
+                {storeName}
+              </Dropdown.Item>
+            ))}
           </DropdownButton>
         </div>
         {buttons &&

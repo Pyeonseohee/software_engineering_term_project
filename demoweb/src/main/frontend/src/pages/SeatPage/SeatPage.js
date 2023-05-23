@@ -6,19 +6,19 @@ import Narvar from "../MapPage/Narvar";
 import axios from "axios";
 
 const SetSeatURL = "http://localhost:8080/api/setseat";
-const SetStoreURL = "http://localhost:8080/api/setstore";
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
+const StoreInfoURL = "http://localhost:8080/api/storeinfo";
 
 function SeatPage() {
   var test = "메가커피";
   const [userSession, setUserSession] = useState("");
   const ref = useRef(null);
-  const [target, setTarget] = useState(null);
-  const [show, setShow] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [draggingButton, setDraggingButton] = useState(null);
-  const [buttonCount, setButtonCount] = useState(0);
-  const [buttons, setButtons] = useState([]);
+  const [storeName, setStoreName] = useState(""); // 어떤 매장인지에 따라
+  const [isDragging, setIsDragging] = useState(false); // 드래깅 여부
+  const [draggingButton, setDraggingButton] = useState(null); // 드래깅 버튼
+  const [buttonCount, setButtonCount] = useState(0); // 버튼 몇 개 있는지
+  const [buttons, setButtons] = useState([]); // 버튼 list
+  const [storeList, setStoreList] = useState([]); // 매장 list
 
   // user session 받아오는 부분
   // 저장했던 버튼의 위치정보 받아 다시 rendering
@@ -27,8 +27,9 @@ function SeatPage() {
   useEffect(() => {
     setUserSession(UserInfo.userSession);
     fetchData();
-  });
+  }, []);
 
+  // 저장된 좌석 정보 받아오기
   const fetchData = async () => {
     const data = {
       session: userSession,
@@ -70,9 +71,9 @@ function SeatPage() {
   const handleMouseUp = () => {
     setIsDragging(false);
     setDraggingButton(null);
-    // Save button positions to the server
   };
 
+  // 좌석 추가버튼
   const handleAddButtonClick = () => {
     if (!isDragging) {
       const newButton = {
@@ -83,20 +84,9 @@ function SeatPage() {
       setButtonCount(buttonCount + 1);
       setButtons([...buttons, newButton]);
     }
-
-    const data = {
-      session: userSession,
-      name: "메가커피",
-    };
-    axios
-      .post(SetStoreURL, JSON.stringify(data), {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        console.log(res);
-      });
   };
 
+  // 두 번 누르면 좌석 삭제
   const handleButtonDoubleClick = (buttonId) => {
     if (!isDragging) {
       const updatedButtons = buttons.filter((button) => button.id !== buttonId);
@@ -125,12 +115,29 @@ function SeatPage() {
       });
   };
 
-  //나중에 좌석 관리 페이지에 쓰일 함수(오른쪽 누르면 좌석 번호, 메뉴, )
-  const handleRightClick = (event, buttonId) => {
-    event.preventDefault();
-    console.log(event.target);
-    setShow(!show);
-    setTarget(event.target);
+  // 드롭다운에서 store정보 받아오는 부분
+  const StoreList = () => {
+    var tmpStoreList = [];
+    const data = {
+      session: userSession,
+    };
+    axios
+      .post(StoreInfoURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        // db에서 가져온 storelist.
+        for (var i = 0; i < res.data.length; i++) {
+          tmpStoreList[i] = res.data[i];
+        }
+        setStoreList(tmpStoreList);
+      });
+  };
+
+  // 드롭다운에서 store 이름 눌렀을 때 실행되는 함수.
+  const storeSelect = (storeName) => {
+    console.log("-------", storeName);
+    setStoreName(storeName);
   };
 
   return (
@@ -148,10 +155,16 @@ function SeatPage() {
         <div
           style={{ margin: "20px", display: "flex", justifyContent: "center" }}
         >
-          <DropdownButton id="dropdown-basic-button" title="매장을 선택하세요 ">
-            <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+          <DropdownButton
+            id="dropdown-basic-button"
+            title="매장을 선택하세요 "
+            onClick={StoreList}
+          >
+            {storeList.map((storeName, index) => (
+              <Dropdown.Item key={index} onClick={() => storeSelect(storeName)}>
+                {storeName}
+              </Dropdown.Item>
+            ))}
           </DropdownButton>
         </div>
         <button
@@ -181,35 +194,10 @@ function SeatPage() {
               onMouseDown={(event) => handleMouseDown(event, button.id)}
               onDoubleClick={() => handleButtonDoubleClick(button.id)}
               onMouseUp={(event) => handleSendSeatInfo(event, button.id)}
-              onContextMenu={(event) => handleRightClick(event, button.id)}
             >
               {button.id}
             </button>
           ))}
-        <Overlay
-          show={show}
-          target={target}
-          placement="bottom"
-          container={ref}
-          containerPadding={20}
-        >
-          <Popover id="popover-contained">
-            <Popover.Header as="h3">Popover bottom</Popover.Header>
-            <Popover.Body>
-              <strong>Holy guacamole!</strong> Check this info.
-            </Popover.Body>
-          </Popover>
-        </Overlay>
-        <button
-          style={{
-            border: "none",
-            width: "70px",
-            height: "50px",
-            backgroundColor: "green",
-          }}
-        >
-          완료
-        </button>
       </div>
     </div>
   );
