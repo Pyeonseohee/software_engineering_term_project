@@ -8,16 +8,16 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
+@IdClass(SeatPK.class)
 @NoArgsConstructor
 public class Seat {
-    @Id // primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_name", referencedColumnName = "name")
     private Store store;
     @Column
     private boolean available;
+    @Id
     private int seatnum;
     private float x;
     private float y;
