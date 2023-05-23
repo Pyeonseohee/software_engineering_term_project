@@ -110,7 +110,8 @@ public class StoreController {
         }
         StorePK storePK = new StorePK(user, dto.getName());
         Optional<Store> store = storeRepository.findById(storePK);
-        Seat seat = seatRepository.findAllByStoreAndSeatnum(store.get(), dto.getSeatnum());
+        SeatPK seatPK = new SeatPK(dto.getSeatnum(), store.get());
+        Seat seat = seatRepository.findById(seatPK).get();
         seat.setAvailable(false);
         seatRepository.save(seat);//좌석현황최신화
         Item item = itemRepository.findByStoreAndName(store.get(), dto.getItem());
