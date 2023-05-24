@@ -31,7 +31,7 @@ function CafeOwnerPage() {
     }
 
     // 매장 정보를 서버로 전송
-    axios.post("/api/storeinfo", store)
+    axios.post("/api/", store)
       .then(response => {
         // 새로운 매장으로 stores 상태 업데이트
         setStores([...stores, response.data]);
@@ -47,7 +47,7 @@ function CafeOwnerPage() {
     const storeId = stores[index]._id;
 
     // 매장 정보를 서버에서 삭제
-    axios.delete(`/api/storeinfo/${storeId}`)
+    axios.delete(`/api//${storeId}`)
       .then(() => {
         // 매장 삭제 후 업데이트된 매장 목록을 불러옴
         fetchStores();
@@ -59,7 +59,7 @@ function CafeOwnerPage() {
 
   // 매장 목록 불러오기
   const fetchStores = () => {
-    axios.get("/api/storeinfo")
+    axios.get("/api/")
       .then(response => {
         setStores(response.data);
       })

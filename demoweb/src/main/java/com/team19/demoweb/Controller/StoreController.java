@@ -161,21 +161,4 @@ public class StoreController {
         }
         return name;
     }
-    //혀누 추가함.
-    @PostMapping("/api/menus")
-    public List<Item> getMenus(@RequestBody MenusRequestDto dto) {
-        // 세션 유효성 검증
-        User user;
-        try {
-            user = userController.checkSession(dto.getSession());
-        } catch (Exception e) {
-            return null;
-        }
-        
-        // 이름과 사용자를 기반으로 가게 검색
-        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
-        
-        // 해당 가게에 속하는 모든 아이템 조회
-        return itemRepository.findByStore(store);
-    }
 }
