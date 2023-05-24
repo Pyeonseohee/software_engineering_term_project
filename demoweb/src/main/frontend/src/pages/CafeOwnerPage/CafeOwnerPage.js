@@ -32,14 +32,14 @@ function CafeOwnerPage() {
 
     // 매장 정보를 서버로 전송
     axios.post("/api/", store)
-      .then(response => {
-        // 새로운 매장으로 stores 상태 업데이트
-        setStores([...stores, response.data]);
-        setStore({ name: '', address: '', phoneNumber: '' });
-      })
-      .catch(error => {
-        console.error("매장 추가 에러:", error);
-      });
+        .then(response => {
+          // 새로운 매장으로 stores 상태 업데이트
+          setStores([...stores, response.data]);
+          setStore({ name: '', address: '', phoneNumber: '' });
+        })
+        .catch(error => {
+          console.error("매장 추가 에러:", error);
+        });
   };
 
   // 매장 삭제
@@ -69,56 +69,56 @@ function CafeOwnerPage() {
   };
 
   return (
-    <div>
-      <Narvar></Narvar>
-      <div className="Main" style={{ margin: 'auto', width: '700px' }}>
-        <div className="d-grid gap-2">
-          <div>
-            <h1>매장 관리</h1>
-            <form>
-              <label>
-                매장 이름:
-                <input
-                  type="text"
-                  name="name"
-                  value={store.name}
-                  onChange={handleChange}
-                />
-              </label>
-              <br />
-              <label>
-                매장 주소:
-                <input
-                  type="text"
-                  name="address"
-                  value={store.address}
-                  onChange={handleChange}
-                />
-              </label>
-              <br />
-              <label>
-                전화번호:
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  value={store.phoneNumber}
-                  onChange={handleChange}
-                />
-              </label>
-            </form>
-            <button onClick={handleAddStore}>매장 추가</button>
-            <ul>
-              {stores.map((s, index) => (
-                <li key={index}>
-                  {s.name}{' '}
-                  <button onClick={() => handleDeleteStore(index)}>삭제</button>
-                </li>
-              ))}
-            </ul>
+      <div>
+        <Narvar></Narvar>
+        <div className="Main" style={{ margin: 'auto', width: '700px' }}>
+          <div className="d-grid gap-2">
+            <div>
+              <h1>매장 관리</h1>
+              <form>
+                <label>
+                  매장 이름:
+                  <input
+                      type="text"
+                      name="name"
+                      value={store.name}
+                      onChange={handleChange}
+                  />
+                </label>
+                <br />
+                <label>
+                  매장 주소:
+                  <input
+                      type="text"
+                      name="address"
+                      value={store.address}
+                      onChange={handleChange}
+                  />
+                </label>
+                <br />
+                <label>
+                  전화번호:
+                  <input
+                      type="text"
+                      name="phoneNumber"
+                      value={store.phoneNumber}
+                      onChange={handleChange}
+                  />
+                </label>
+              </form>
+              <button onClick={handleAddStore}>매장 추가</button>
+              <ul>
+                {stores.map((s, index) => (
+                    <li key={index}>
+                      {s.name}{' '}
+                      <button onClick={() => handleDeleteStore(index)}>삭제</button>
+                    </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

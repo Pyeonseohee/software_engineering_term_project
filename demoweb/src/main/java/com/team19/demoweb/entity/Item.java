@@ -14,7 +14,7 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_name", referencedColumnName = "name")
+    @JoinColumn(name = "store_id")
     private Store store;
     @Column (name = "name")
     private String name;

@@ -9,14 +9,15 @@ import lombok.Builder;
 @Entity
 @Setter
 @Getter
-@IdClass(StorePK.class)
 @NoArgsConstructor
 public class Store {
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "id")
     private User user;
-    @Id
+    
     private String name;
 
     @Builder
