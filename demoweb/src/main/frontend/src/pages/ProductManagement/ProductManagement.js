@@ -31,14 +31,14 @@ function ProductManagement() {
 
     // 메뉴 정보를 서버로 전송
     axios.post("/api/", menu)
-        .then(response => {
-          // 새로운 메뉴로 menus 상태 업데이트
-          setMenus([...menus, response.data]);
-          setMenu({ name: "", cost: "" });
-        })
-        .catch(error => {
-          console.error("메뉴 추가 에러:", error);
-        });
+      .then(response => {
+        // 새로운 메뉴로 menus 상태 업데이트
+        setMenus([...menus, response.data]);
+        setMenu({ name: "", cost: "" });
+      })
+      .catch(error => {
+        console.error("메뉴 추가 에러:", error);
+      });
   };
 
   // 메뉴 삭제
@@ -47,24 +47,24 @@ function ProductManagement() {
 
     // 메뉴 정보를 서버에서 삭제
     axios.delete(`/api//${menuId}`)
-        .then(() => {
-          // 메뉴 삭제 후 업데이트된 메뉴 목록을 불러옴
-          fetchMenus();
-        })
-        .catch(error => {
-          console.error("메뉴 삭제 에러:", error);
-        });
+      .then(() => {
+        // 메뉴 삭제 후 업데이트된 메뉴 목록을 불러옴
+        fetchMenus();
+      })
+      .catch(error => {
+        console.error("메뉴 삭제 에러:", error);
+      });
   };
 
   // 메뉴 목록 불러오기
   const fetchMenus = () => {
     axios.get("/api/")
-        .then(response => {
-          setMenus(response.data);
-        })
-        .catch(error => {
-          console.error("메뉴 목록 불러오기 에러:", error);
-        });
+      .then(response => {
+        setMenus(response.data);
+      })
+      .catch(error => {
+        console.error("메뉴 목록 불러오기 에러:", error);
+      });
   };
 
   return (

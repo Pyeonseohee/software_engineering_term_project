@@ -48,24 +48,24 @@ function CafeOwnerPage() {
 
     // 매장 정보를 서버에서 삭제
     axios.delete(`/api//${storeId}`)
-        .then(() => {
-          // 매장 삭제 후 업데이트된 매장 목록을 불러옴
-          fetchStores();
-        })
-        .catch(error => {
-          console.error("매장 삭제 에러:", error);
-        });
+      .then(() => {
+        // 매장 삭제 후 업데이트된 매장 목록을 불러옴
+        fetchStores();
+      })
+      .catch(error => {
+        console.error("매장 삭제 에러:", error);
+      });
   };
 
   // 매장 목록 불러오기
   const fetchStores = () => {
     axios.get("/api/")
-        .then(response => {
-          setStores(response.data);
-        })
-        .catch(error => {
-          console.error("매장 목록 불러오기 에러:", error);
-        });
+      .then(response => {
+        setStores(response.data);
+      })
+      .catch(error => {
+        console.error("매장 목록 불러오기 에러:", error);
+      });
   };
 
   return (
