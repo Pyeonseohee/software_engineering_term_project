@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @Data
 public class StorePK implements Serializable {
-    private User user;
-    private String name;
+    private final User user;
+    private final String name;
 }

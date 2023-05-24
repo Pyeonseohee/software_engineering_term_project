@@ -5,6 +5,6 @@ import java.io.Serializable;
 
 @Data
 public class SeatPK implements Serializable {
-    private int seatnum;
-    private Store store;
+    private final int seatnum;
+    private final Store store;
 }
