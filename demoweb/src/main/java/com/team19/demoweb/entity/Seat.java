@@ -8,12 +8,14 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-@IdClass(SeatPK.class)
+
 @NoArgsConstructor
 public class Seat {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_name", referencedColumnName = "name")
+    @JoinColumn(name = "store_id")
     private Store store;
     @Column
     private boolean available;
@@ -21,6 +23,20 @@ public class Seat {
     private int seatnum;
     private float x;
     private float y;
+    
+    public Seat(Long id, Store store, int seatnum, float x, float y) {
+        this.id = id;
+        this.store = store;
+        this.seatnum = seatnum;
+        this.x = x;
+        this.y = y;
+    }
+    
+    public Seat(Long id, Store store, int seatnum) {
+        this.id = id;
+        this.store = store;
+        this.seatnum = seatnum;
+    }
     
     public Seat(Store store, int seatnum, float x, float y) {
         this.store = store;

@@ -6,6 +6,8 @@ import com.team19.demoweb.repository.ItemRepository;
 import com.team19.demoweb.repository.SeatRepository;
 import com.team19.demoweb.repository.StoreRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,9 @@ public class StoreController {
     private final SeatRepository seatRepository;
     private final ItemRepository itemRepository;
     private final UserController userController;
+    
+    @PersistenceContext
+    private EntityManager em;
     
     public StoreController(StoreRepository storeRepository, SeatRepository seatRepository, ItemRepository itemRepository, UserController userController) {
         this.storeRepository = storeRepository;
@@ -45,10 +50,28 @@ public class StoreController {
         //store정보 기반으로 객체 생성후, user와 관계 설정 후 저장
         Store store = new Store(user, dto.getName());
         storeRepository.save(store);
-//        for (int i = 0; i < dto.getSeatCnt(); i++) {
-//            Seat seat = new Seat(i+1, store, true);
-//            seatRepository.save(seat);
-//        }
+        return "Store information setting Sucessful";
+    }
+    
+    //store정보 설정
+    @PostMapping("/api/deletestore")
+    public String deleteStore(@RequestBody SetStoreRequestDto dto) {
+        //Optional<User> user = userRepository.findByStore(store.getUser().getStore());
+        //session 검증 후 user 정보 가져오기
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return "Invalid Session";
+        }
+        
+        /*
+         **사업자 번호 검증 부분 추가 필요
+         */
+        
+        //store정보 기반으로 객체 생성후, user와 관계 설정 후 저장
+        Store store = new Store(user, dto.getName());
+        storeRepository.delete(store);
         return "Store information setting Sucessful";
     }
     
@@ -60,8 +83,14 @@ public class StoreController {
         } catch (Exception e) {
             return "Invalid Session";
         }
-        StorePK storePK = new StorePK(user, dto.getName());
-        Optional<Store> store = storeRepository.findById(storePK);
+        Optional<Store> store = storeRepository.findById(user.getId());
+        //좌석이 이미 있으면
+        if(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).isPresent()){
+            Seat seat = new Seat(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get().getId(),
+                    store.get(), dto.getSeatnum(), dto.getX(), dto.getY());
+            seatRepository.save(seat);
+            return "Success";
+        }
         Seat seat = new Seat(store.get(), dto.getSeatnum(), dto.getX(), dto.getY());
         seatRepository.save(seat);
         return "Success";
@@ -75,9 +104,8 @@ public class StoreController {
         } catch (Exception e) {
             return "Invalid Session";
         }
-        StorePK storePK = new StorePK(user, dto.getName());
-        Optional<Store> store = storeRepository.findById(storePK);
-        Seat seat = new Seat(store.get(), dto.getSeatnum());
+        Optional<Store> store = storeRepository.findById(user.getId());
+        Seat seat = new Seat(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get().getId(), store.get(), dto.getSeatnum());
         seatRepository.delete(seat);
         return "Success";
     }
@@ -93,8 +121,7 @@ public class StoreController {
             return null;
         }
         //user와 조인된 store 정보를 기반으로 전체 seat정보 반환
-        StorePK storePK = new StorePK(user, dto.getName());
-        Optional<Store> store = storeRepository.findById(storePK);
+        Optional<Store> store = storeRepository.findById(user.getId());
         return seatRepository.findAllByStore(store.get());
     }
     
@@ -108,10 +135,8 @@ public class StoreController {
         } catch (Exception e) {
             return 0;
         }
-        StorePK storePK = new StorePK(user, dto.getName());
-        Optional<Store> store = storeRepository.findById(storePK);
-        SeatPK seatPK = new SeatPK(dto.getSeatnum(), store.get());
-        Seat seat = seatRepository.findById(seatPK).get();
+        Optional<Store> store = storeRepository.findById(user.getId());
+        Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         seat.setAvailable(false);
         seatRepository.save(seat);//좌석현황최신화
         Item item = itemRepository.findByStoreAndName(store.get(), dto.getItem());
@@ -126,9 +151,8 @@ public class StoreController {
         } catch (Exception e) {
             return null;
         }
-        StorePK storePK = new StorePK(user, dto.getName());
-        Optional<Store> store = storeRepository.findById(storePK);
-        Seat seat = seatRepository.findAllByStoreAndSeatnum(store.get(), dto.getSeatnum());
+        Optional<Store> store = storeRepository.findById(user.getId());
+        Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         seat.setAvailable(true);
         seatRepository.save(seat);//좌석현황최신화
         return  "Success";
@@ -142,16 +166,30 @@ public class StoreController {
         } catch (Exception e) {
             return null;
         }
-        StorePK storePK = new StorePK(user, dto.getStorename());
-        Optional<Store> store = storeRepository.findById(storePK);
+        Optional<Store> store = storeRepository.findById(user.getId());
         Item item = new Item(store.get(), dto.getItemname(), dto.getPrice(), dto.getTime());
         itemRepository.save(item);
         return "Add item success";
     }
     
+    @PostMapping("/api/deleteitem")
+    public String deleteitem(@RequestBody AddItemDto dto) {
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return null;
+        }
+        Optional<Store> store = storeRepository.findById(user.getId());
+        Item item = itemRepository.findByStoreAndName(store.get(), dto.getItemname());
+//        Item item = new Item(store.get(), dto.getItemname(), dto.getPrice(), dto.getTime());
+        itemRepository.delete(item);
+        return "Delete item success";
+    }
+    
     //유저에 따른 store정보 클라에 제공
     @PostMapping("/api/storeinfo")
-    public List<String> getStore(@RequestBody StoreInfoRequestDto dto) {
+    public Store getStore(@RequestBody StoreInfoRequestDto dto) {
         //session 검증
         User user;
         try {
@@ -160,13 +198,8 @@ public class StoreController {
             return null;
         }
         // user와 연결된 store 검색 후 반환
-        List<Store> store = storeRepository.findByUser(user);
-        List<String> name = new ArrayList<>();
-        for (int i = 0; i < store.size(); i++) {
-            name.add(store.get(i).getName());
-            
-        }
-        return name;
+        Optional<Store> store = storeRepository.findById(user.getId());
+        return store.get();
     }
     //혀누 추가함.
     @PostMapping("/api/menus")
@@ -178,11 +211,11 @@ public class StoreController {
         } catch (Exception e) {
             return null;
         }
-        
-        // 이름과 사용자를 기반으로 가게 검색
-        Store store = storeRepository.findByNameAndUser(dto.getName(), user);
-        
+    
+        // user와 연결된 store 검색 후 반환
+        Optional<Store> store = storeRepository.findById(user.getId());
+
         // 해당 가게에 속하는 모든 아이템 조회
-        return itemRepository.findByStore(store);
+        return itemRepository.findAllByStore(store.get());
     }
 }
