@@ -137,12 +137,12 @@ public class StoreController {
         Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         seat.setAvailable(false);
         Item item = itemRepository.findByStoreAndName(store.get(), dto.getItem());
-        seat.setEndtime(LocalDateTime.now().plusSeconds(item.getTime()));
+        seat.setEndtime(LocalDateTime.now().withNano(0).plusSeconds(item.getTime()).withNano(0));
         seatRepository.save(seat);//좌석현황최신화
         return item.getTime();
     }
     
-    //어느가게의 몇번좌석에서 무슨음료샀는지 클라이언트가보내면 프론트에서 요청한 좌석마다 엔드타임 받아와서타이머세팅
+    //프론트에서 요청한 좌석의 종료시간 가져와서 보내줌
     @PostMapping("/api/endtime")
     public LocalDateTime endtime(@RequestBody EndtimeRequestDto dto) {
         //session 검증

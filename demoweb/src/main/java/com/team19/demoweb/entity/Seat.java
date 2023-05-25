@@ -24,6 +24,7 @@ public class Seat {
     private int seatnum;
     private float x;
     private float y;
+    
     private LocalDateTime endtime;
     
     public Seat(Long id, Store store, int seatnum, float x, float y) {
