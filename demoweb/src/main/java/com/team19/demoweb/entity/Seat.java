@@ -19,14 +19,14 @@ public class Seat {
     private Store store;
     @Column
     private boolean available;
-    @Id
     private int seatnum;
     private float x;
     private float y;
     
-    public Seat(Long id, Store store, int seatnum, float x, float y) {
+    public Seat(Long id, Store store, boolean available, int seatnum, float x, float y) {
         this.id = id;
         this.store = store;
+        this.available = available;
         this.seatnum = seatnum;
         this.x = x;
         this.y = y;
