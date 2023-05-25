@@ -143,7 +143,7 @@ public class StoreController {
         return item.getTime();
     }
     
-    @PostMapping("/api/seatavaiable")
+    @PostMapping("/api/seatavailable")
     public String seatavaiable(@RequestBody SeatAvaiableDto dto) {
         //session 검증
         User user;

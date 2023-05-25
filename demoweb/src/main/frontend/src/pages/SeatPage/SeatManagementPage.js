@@ -18,6 +18,7 @@ const StoreInfoURL = "http://localhost:8080/api/storeinfo";
 const SetPurchaseURL = "http://localhost:8080/api/setpurchase";
 const GetMenusURL = "http://localhost:8080/api/menus";
 const AddItemURL = "http://localhost:8080/api/additem";
+const SeatAvailableURL = "http://localhost:8080/api/seatavailable";
 
 function SeatManagementPage() {
   const ref = useRef(null);
@@ -43,8 +44,7 @@ function SeatManagementPage() {
   useEffect(() => {
     setUserSession(UserInfo.userSession);
     confirmStore();
-    //fetchData();
-  }, [storeName, available]);
+  }, [storeName]);
 
   // 매장 있는지 없는지 확인
   const confirmStore = () => {
@@ -176,6 +176,21 @@ function SeatManagementPage() {
   // 종료 버튼 누르면
   const handleEndButtonClick = () => {
     console.log("test");
+    const data = {
+      session: userSession,
+      seatnum: currentButton,
+    };
+    setShow(false);
+    axios
+      .post(SeatAvailableURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        new Swal({
+          icon: "success",
+          title: "좌석이용이 종료되었습니다.",
+        });
+      });
   };
 
   // testAddItemAPI
