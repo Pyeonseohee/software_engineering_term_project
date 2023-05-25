@@ -43,11 +43,13 @@ function SeatPage() {
       })
       .then((res) => {
         console.log(res);
-        if (res.data != "doesn't exist.") {
+        if (res.data != null) {
           setExistStore(true);
           setStoreName(res.data.name);
           console.log(res.data.name);
           fetchData();
+        } else {
+          console.log("------no store!!!");
         }
       });
   };
@@ -110,18 +112,6 @@ function SeatPage() {
       setButtonCount(buttonCount + 1);
       setButtons([...buttons, newButton]);
     }
-
-    // const data = {
-    //   session: userSession,
-    //   name: test,
-    // };
-    // axios
-    //   .post(setStoreURL, JSON.stringify(data), {
-    //     headers: { "Content-Type": "application/json" },
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
   };
 
   // 두 번 누르면 좌석 삭제

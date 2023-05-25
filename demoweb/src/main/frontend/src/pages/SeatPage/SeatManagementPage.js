@@ -15,6 +15,7 @@ import axios from "axios";
 
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
 const StoreInfoURL = "http://localhost:8080/api/storeinfo";
+const SetStoreURL = "http://localhost:8080/api/setstore";
 const SetPurchaseURL = "http://localhost:8080/api/setpurchase";
 const GetMenusURL = "http://localhost:8080/api/menus";
 const AddItemURL = "http://localhost:8080/api/additem";
@@ -58,11 +59,14 @@ function SeatManagementPage() {
       })
       .then((res) => {
         console.log(res);
-        if (res.data != "doesn't exist.") {
+        if (res.data != null) {
           setExistStore(true);
           setStoreName(res.data.name);
           console.log(res.data.name);
           fetchData();
+        } else {
+          console.log("---", res.data);
+          setExistStore(false);
         }
       });
   };
@@ -79,9 +83,12 @@ function SeatManagementPage() {
       })
       .then((res) => {
         var use = [false];
+        var time = [0];
         for (var i = 0; i < res.data.length; i++) {
           use[i + 1] = res.data[i].available;
+          time[i + 1] = 0; // 여기 db들어가야함.
         }
+        console.log(time);
         setAvailable(use);
         setButtons(res.data);
       });
@@ -193,6 +200,35 @@ function SeatManagementPage() {
       });
   };
 
+  const handleSetStoreButtonClick = () => {
+    new Swal({
+      title: "매장 등록하기",
+      input: "text",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      showCancelButton: true,
+      confirmButtonText: "매장 추가하기",
+      showLoaderOnConfirm: true,
+      showCancelButton: true,
+      cancelButtonText: "취소",
+    }).then((result) => {
+      const data = {
+        session: userSession,
+        name: result.value,
+      };
+      axios
+        .post(SetStoreURL, JSON.stringify(data), {
+          headers: { "Content-Type": "application/json" },
+        })
+        .then((res) => {
+          console.log("success");
+          setExistStore(true);
+          setStoreName(result.value);
+        });
+    });
+  };
+
   // testAddItemAPI
   const addItem = () => {
     console.log("test");
@@ -211,9 +247,30 @@ function SeatManagementPage() {
         console.log(res);
       });
   };
-  return (
-    <div>
-      <Narvar user={userSession}></Narvar>
+
+  const notExistStore = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100vw",
+          height: "100vh",
+        }}
+      >
+        <div>
+          <h2>매장이 존재하지 않습니다.</h2>내 매장을 먼저 등록해주세요!
+          <br />
+          <br />
+          <button onClick={handleSetStoreButtonClick}>등록하러 가기</button>
+        </div>
+      </div>
+    );
+  };
+
+  const ifExistStore = () => {
+    return (
       <div
         ref={ref}
         style={{
@@ -355,6 +412,12 @@ function SeatManagementPage() {
         </Overlay>
         <button onClick={addItem}>메뉴 추가</button>
       </div>
+    );
+  };
+  return (
+    <div>
+      <Narvar user={userSession}></Narvar>
+      <div>{existStore ? ifExistStore() : notExistStore()}</div>
     </div>
   );
 }

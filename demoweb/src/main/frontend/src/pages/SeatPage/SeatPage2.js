@@ -29,7 +29,7 @@ function SeatPage2() {
       headers: { "Content-Type": "application/json" },
     })
     .then((res) => {
-      if (res.data == "") {
+      if (res.data == null) {
         setExistStore(false);
       } else {
         setExistStore(true);

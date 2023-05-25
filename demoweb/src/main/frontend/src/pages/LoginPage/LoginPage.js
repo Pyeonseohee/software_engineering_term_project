@@ -64,7 +64,7 @@ function LoginPage(props) {
             title: "로그인 되었습니다!",
             icon: "success",
           }).then(function () {
-            navigate("/seat", { state: { userSession: session } });
+            navigate("/seatManage", { state: { userSession: session } });
           });
         }
       })
