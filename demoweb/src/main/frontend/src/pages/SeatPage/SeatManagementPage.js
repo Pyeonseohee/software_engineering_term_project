@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Narvar from "../MapPage/Narvar";
+import Swal from "sweetalert2"; // alert 디자인
 import axios from "axios";
 
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
@@ -43,7 +44,7 @@ function SeatManagementPage() {
     setUserSession(UserInfo.userSession);
     confirmStore();
     //fetchData();
-  }, [storeName]);
+  }, [storeName, available]);
 
   // 매장 있는지 없는지 확인
   const confirmStore = () => {
@@ -159,13 +160,16 @@ function SeatManagementPage() {
       seatnum: currentButton,
       item: Object.keys(menuPrice).find((key) => menuPrice[key] === max_time), // 시간 가장 많은 item
     };
-    console.log(data);
+    setShow(false);
     axios
       .post(SetPurchaseURL, JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        console.log(res.data);
+        new Swal({
+          icon: "success",
+          title: "좌석 이용을 시작합니다.",
+        });
       });
   };
 
@@ -175,8 +179,8 @@ function SeatManagementPage() {
     const data = {
       session: userSession,
       storename: storeName,
-      itemname: "라떼",
-      price: 4500,
+      itemname: "모카",
+      price: 6000,
       time: 70000,
     };
     axios
@@ -219,7 +223,9 @@ function SeatManagementPage() {
                 top: button.y,
                 width: "70px",
                 height: "70px",
-                backgroundColor: available[button.seatnum] ? "red" : "#F0F0F0",
+                backgroundColor: available[button.seatnum]
+                  ? "#F0F0F0"
+                  : "#1B9C85",
               }}
               onContextMenu={(event) =>
                 handleRightClick(event, button.seatnum, button.available)
@@ -235,11 +241,50 @@ function SeatManagementPage() {
           container={ref}
           containerPadding={20}
         >
-          {using ? ( // 사용중이면
+          {!available[currentButton] ? ( // 사용중이면
             <Popover id="popover-contained">
-              <Popover.Header as="h3">사용중..</Popover.Header>
+              <Popover.Header as="h3">
+                <CloseButton
+                  onClick={() => {
+                    setShow(false);
+                  }}
+                />
+                <span>&nbsp;&nbsp;&nbsp;</span>사용중인 좌석
+                <span>&nbsp;</span>
+                <button onClick={handlePurchaseButtonClick}>추가</button>
+                <button onClick={handlePurchaseButtonClick}>종료</button>
+              </Popover.Header>
               <Popover.Body>
-                <strong>Holy guacamole!</strong> Check this info.
+                <strong>시간을 추가하시겠습니까?</strong>
+                <br />
+                <br />
+                메뉴를 선택해주세요
+                <Dropdown>
+                  <Dropdown.Toggle
+                    as={CustomToggle}
+                    id="dropdown-custom-components"
+                  >
+                    메뉴 추가하기
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu as={CustomMenu}>
+                    {dropdownItems.map((menu, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        onClick={() => handleMenuSelect(menu)}
+                      >
+                        {menu}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                  <br />
+                  <br />
+                  <ListGroup>
+                    <ListGroup.Item disabled>주문하신 메뉴</ListGroup.Item>
+                    {selectedItems.map((item, index) => (
+                      <ListGroup.Item key={index}>{item}</ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </Dropdown>
               </Popover.Body>
             </Popover>
           ) : (
@@ -288,7 +333,7 @@ function SeatManagementPage() {
             </Popover>
           )}
         </Overlay>
-        <button>메뉴 추가</button>
+        <button onClick={addItem}>메뉴 추가</button>
       </div>
     </div>
   );
