@@ -143,6 +143,26 @@ public class StoreController {
         return item.getTime();
     }
     
+    @PostMapping("/api/seatavaiable")
+    public String seatavaiable(@RequestBody SeatAvaiableDto dto) {
+        //session 검증
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return null;
+        }
+        Optional<Store> store = storeRepository.findById(user.getId());
+        Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
+        if (seat.isAvailable()) {
+            seat.setAvailable(false);
+            return "Set seat Unavailable";
+        } else {
+            seat.setAvailable(true);
+            return "Set seat Available";
+        }
+    }
+    
     @PostMapping("/api/timeover")//좌석시간 끝난거 받음
     public String endseatInfo(@RequestBody TimeoverDto dto) {
         User user;
