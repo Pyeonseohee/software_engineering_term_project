@@ -156,9 +156,11 @@ public class StoreController {
         Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         if (seat.isAvailable()) {
             seat.setAvailable(false);
+            seatRepository.save(seat);
             return "Set seat Unavailable";
         } else {
             seat.setAvailable(true);
+            seatRepository.save(seat);
             return "Set seat Available";
         }
     }
