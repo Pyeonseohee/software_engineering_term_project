@@ -173,6 +173,11 @@ function SeatManagementPage() {
       });
   };
 
+  // 종료 버튼 누르면
+  const handleEndButtonClick = () => {
+    console.log("test");
+  };
+
   // testAddItemAPI
   const addItem = () => {
     console.log("test");
@@ -252,7 +257,7 @@ function SeatManagementPage() {
                 <span>&nbsp;&nbsp;&nbsp;</span>사용중인 좌석
                 <span>&nbsp;</span>
                 <button onClick={handlePurchaseButtonClick}>추가</button>
-                <button onClick={handlePurchaseButtonClick}>종료</button>
+                <button onClick={handleEndButtonClick}>종료</button>
               </Popover.Header>
               <Popover.Body>
                 <strong>시간을 추가하시겠습니까?</strong>
