@@ -11,6 +11,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @CrossOrigin("http://localhost:3000")
@@ -22,9 +23,6 @@ public class StoreController {
     private final ItemRepository itemRepository;
     private final UserController userController;
     
-    @PersistenceContext
-    private EntityManager em;
-    
     public StoreController(StoreRepository storeRepository, SeatRepository seatRepository, ItemRepository itemRepository, UserController userController) {
         this.storeRepository = storeRepository;
         this.seatRepository = seatRepository;
@@ -34,7 +32,6 @@ public class StoreController {
     //store정보 설정
     @PostMapping("/api/setstore")
     public String setStore(@RequestBody SetStoreRequestDto dto) {
-        //Optional<User> user = userRepository.findByStore(store.getUser().getStore());
         //session 검증 후 user 정보 가져오기
         User user;
         try {
@@ -92,6 +89,7 @@ public class StoreController {
             return "Success";
         }
         Seat seat = new Seat(store.get(), true, dto.getSeatnum(), dto.getX(), dto.getY());
+        seat.setEndtime(null);
         seatRepository.save(seat);
         return "Success";
     }
@@ -138,11 +136,26 @@ public class StoreController {
         Optional<Store> store = storeRepository.findById(user.getId());
         Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         seat.setAvailable(false);
-        seatRepository.save(seat);//좌석현황최신화
         Item item = itemRepository.findByStoreAndName(store.get(), dto.getItem());
+        seat.setEndtime(LocalDateTime.now().plusSeconds(item.getTime()));
+        seatRepository.save(seat);//좌석현황최신화
         return item.getTime();
     }
     
+    //어느가게의 몇번좌석에서 무슨음료샀는지 클라이언트가보내면 프론트에서 요청한 좌석마다 엔드타임 받아와서타이머세팅
+    @PostMapping("/api/endtime")
+    public LocalDateTime endtime(@RequestBody EndtimeRequestDto dto) {
+        //session 검증
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return null;
+        }
+        Optional<Store> store = storeRepository.findById(user.getId());
+        Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
+        return seat.getEndtime();
+    }
     @PostMapping("/api/seatavailable")
     public String seatavaiable(@RequestBody SeatAvaiableDto dto) {
         //session 검증
@@ -160,6 +173,7 @@ public class StoreController {
             return "Set seat Unavailable";
         } else {
             seat.setAvailable(true);
+            seat.setEndtime(null);
             seatRepository.save(seat);
             return "Set seat Available";
         }
@@ -176,6 +190,7 @@ public class StoreController {
         Optional<Store> store = storeRepository.findById(user.getId());
         Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         seat.setAvailable(true);
+        seat.setEndtime(null);
         seatRepository.save(seat);//좌석현황최신화
         return  "Success";
     }
@@ -204,7 +219,6 @@ public class StoreController {
         }
         Optional<Store> store = storeRepository.findById(user.getId());
         Item item = itemRepository.findByStoreAndName(store.get(), dto.getItemname());
-//        Item item = new Item(store.get(), dto.getItemname(), dto.getPrice(), dto.getTime());
         itemRepository.delete(item);
         return "Delete item success";
     }
