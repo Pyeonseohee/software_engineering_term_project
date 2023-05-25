@@ -26,7 +26,6 @@ function App() {
           <Route path="/seat" element={<SeatPage />} />
           <Route path="/seat2" element={<SeatPage2 />} />
           <Route path="/seat3" element={<TestSeat />} />
-          <Route path="/Ownerpage" element={<CafeOwnerPage />} />
           <Route path="/userInfo" element={<UserInfo />} />
           <Route path="/ProductManagement" element={<ProductManagement />} />
           <Route path="/seatManage" element={<SeatManagementPage />} />

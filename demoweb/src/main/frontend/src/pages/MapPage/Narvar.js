@@ -21,21 +21,22 @@ const Narvar = (props) => {
         <Nav className="me-auto">
           <Nav.Link
             onClick={() =>
-              navigate("/Ownerpage", { state: { userSession: session } })
-            }
-            active={location == "/Ownerpage" ? true : false}
-          >
-            내 매장
-          </Nav.Link>
-          <Nav.Link
-            onClick={() =>
               navigate("/seatManage", { state: { userSession: session } })
             }
             active={location == "/seatManage" ? true : false}
           >
             좌석 관리
           </Nav.Link>
-          <Nav.Link href="/register">제품 관리</Nav.Link>
+          <Nav.Link
+            onClick={() =>
+              navigate("/ProductManagement", {
+                state: { userSession: session },
+              })
+            }
+            active={location == "/ProductManagement" ? true : false}
+          >
+            제품 관리
+          </Nav.Link>
           <Nav.Link
             onClick={() =>
               navigate("/seat", { state: { userSession: session } })
