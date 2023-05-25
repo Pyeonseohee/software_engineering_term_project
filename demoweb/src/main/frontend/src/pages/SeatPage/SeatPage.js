@@ -27,12 +27,12 @@ function SeatPage() {
   const UserInfo = { ...location.state };
   useEffect(() => {
     setUserSession(UserInfo.userSession);
-    exitStore();
+    confirmStore();
     //fetchData();
   }, [storeName]);
 
   // 매장 있는지 없는지 확인
-  const exitStore = () => {
+  const confirmStore = () => {
     const data = {
       session: userSession,
     };
