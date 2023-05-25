@@ -7,7 +7,7 @@ import axios from "axios";
 
 const SetSeatURL = "http://localhost:8080/api/setseat";
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
-const setStoreURL = "http://localhost:8080/api/setstore";
+const SetStoreURL = "http://localhost:8080/api/setstore";
 const StoreInfoURL = "http://localhost:8080/api/storeinfo";
 
 function SeatPage() {
@@ -73,7 +73,6 @@ function SeatPage() {
 
   // 버튼을 드래그하여 옮길 때
   const handleMouseDown = (event, buttonId) => {
-    console.log("test");
     setIsDragging(true);
     setDraggingButton(buttonId);
   };
@@ -164,7 +163,7 @@ function SeatPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        //console.log(res);
+        console.log(res);
       });
   };
 

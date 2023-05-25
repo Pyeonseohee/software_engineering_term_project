@@ -23,7 +23,6 @@ const SeatAvailableURL = "http://localhost:8080/api/seatavailable";
 
 function SeatManagementPage() {
   const ref = useRef(null);
-  const [using, setUsing] = useState(false);
   const [storeName, setStoreName] = useState("매장을 선택하세요."); // 어떤 매장인지에 따라
   const [existStore, setExistStore] = useState(false);
   const [userSession, setUserSession] = useState("");
@@ -32,7 +31,7 @@ function SeatManagementPage() {
   const [currentButton, setCurrentButton] = useState(0);
   const [buttons, setButtons] = useState([]);
   const [available, setAvailable] = useState([]); // 사용중인지 아닌지
-  const [timers, setTimers] = useState([]); // 사용중인지 아닌지
+  const [timers, setTimers] = useState([]); // timer
   const [dropdownItems, setDropdownItems] = useState([]); // 메뉴 list
   const [menuPrice, setMenuPrice] = useState({});
   const [selectedMenu, setSelectedMenu] = useState(null);
@@ -45,7 +44,7 @@ function SeatManagementPage() {
   useEffect(() => {
     setUserSession(UserInfo.userSession);
     confirmStore();
-  }, [storeName]);
+  }, [storeName, available]);
 
   // 매장 있는지 없는지 확인
   const confirmStore = () => {
@@ -58,14 +57,12 @@ function SeatManagementPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        console.log(res);
         if (res.data != null) {
+          // 매장이 없으면
           setExistStore(true);
           setStoreName(res.data.name);
-          console.log(res.data.name);
           fetchData();
         } else {
-          console.log("---", res.data);
           setExistStore(false);
         }
       });
@@ -85,10 +82,10 @@ function SeatManagementPage() {
         var use = [false];
         var time = [0];
         for (var i = 0; i < res.data.length; i++) {
+          console.log(res.data[i].available);
           use[i + 1] = res.data[i].available;
           time[i + 1] = 0; // 여기 db들어가야함.
         }
-        console.log(time);
         setAvailable(use);
         setButtons(res.data);
       });
@@ -98,7 +95,6 @@ function SeatManagementPage() {
   const handleRightClick = (event, buttonId, available) => {
     setCurrentButton(buttonId);
     event.preventDefault();
-    console.log(currentButton, available);
     fetchDropDownItems();
     setSelectedItems([]);
     setShow(true);
@@ -115,14 +111,12 @@ function SeatManagementPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        console.log(res.data.name);
         setStoreName(res.data.name);
       });
   };
 
   // 드롭다운에서 store 이름 눌렀을 때 실행되는 함수.
   const storeSelect = (storeName) => {
-    console.log("-------", storeName);
     setStoreName(storeName);
   };
 
@@ -137,7 +131,6 @@ function SeatManagementPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        console.log(res.data);
         for (var i = 0; i < res.data.length; i++) {
           itemList[res.data[i].name] = res.data[i].time;
         }
