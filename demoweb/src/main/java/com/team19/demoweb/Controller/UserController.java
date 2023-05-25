@@ -51,8 +51,6 @@ public class UserController {
     public String loginV2(@RequestBody UserLogInRequestDto dto){
         Optional<User> user = userRepository.findByEmail(dto.getEmail());
         System.out.println("----------\n");
-        System.out.println(user.get().getPw());
-        System.out.println(dto.getPw());
         if(user.isEmpty()){//존재하지 않는 유저(이메일)일때
             return "sign up first";
         }

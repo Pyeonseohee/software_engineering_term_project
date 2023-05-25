@@ -7,18 +7,18 @@ import axios from "axios";
 
 const SetSeatURL = "http://localhost:8080/api/setseat";
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
+const setStoreURL = "http://localhost:8080/api/setstore";
 const StoreInfoURL = "http://localhost:8080/api/storeinfo";
 
 function SeatPage() {
   var test = "메가커피";
   const [userSession, setUserSession] = useState("");
   const ref = useRef(null);
-  const [storeName, setStoreName] = useState(""); // 어떤 매장인지에 따라
+  const [storeName, setStoreName] = useState("매장을 선택하세요."); // 어떤 매장인지에 따라
   const [isDragging, setIsDragging] = useState(false); // 드래깅 여부
   const [draggingButton, setDraggingButton] = useState(null); // 드래깅 버튼
-  const [buttonCount, setButtonCount] = useState(0); // 버튼 몇 개 있는지
+  const [buttonCount, setButtonCount] = useState(1); // 버튼 몇 개 있는지
   const [buttons, setButtons] = useState([]); // 버튼 list
-  const [storeList, setStoreList] = useState([]); // 매장 list
 
   // user session 받아오는 부분
   // 저장했던 버튼의 위치정보 받아 다시 rendering
@@ -26,23 +26,23 @@ function SeatPage() {
   const UserInfo = { ...location.state };
   useEffect(() => {
     setUserSession(UserInfo.userSession);
-    fetchData();
+    //fetchData();
   }, []);
 
-  // 저장된 좌석 정보 받아오기
-  const fetchData = async () => {
-    const data = {
-      session: userSession,
-      name: test,
-    };
-    axios
-      .post(SeatInfoURL, JSON.stringify(data), {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        setButtons(res.data);
-      });
-  };
+  // // 저장된 좌석 정보 받아오기
+  // const fetchData = async () => {
+  //   const data = {
+  //     session: userSession,
+  //     name: test,
+  //   };
+  //   axios
+  //     .post(SeatInfoURL, JSON.stringify(data), {
+  //       headers: { "Content-Type": "application/json" },
+  //     })
+  //     .then((res) => {
+  //       setButtons(res.data);
+  //     });
+  // };
 
   // 버튼을 드래그하여 옮길 때
   const handleMouseDown = (event, buttonId) => {
@@ -84,15 +84,42 @@ function SeatPage() {
       setButtonCount(buttonCount + 1);
       setButtons([...buttons, newButton]);
     }
+
+    // const data = {
+    //   session: userSession,
+    //   name: test,
+    // };
+    // axios
+    //   .post(setStoreURL, JSON.stringify(data), {
+    //     headers: { "Content-Type": "application/json" },
+    //   })
+    //   .then((res) => {
+    //     console.log(res);
+    //   });
   };
 
   // 두 번 누르면 좌석 삭제
   const handleButtonDoubleClick = (buttonId) => {
-    if (!isDragging) {
-      const updatedButtons = buttons.filter((button) => button.id !== buttonId);
-      setButtons(updatedButtons);
-      setButtonCount(buttonCount - 1);
-    }
+    const data = {
+      session: userSession,
+      name: test,
+      seatnum: buttonId,
+    };
+    console.log(JSON.stringify(data));
+    axios
+      .delete(SetSeatURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res);
+        if (!isDragging) {
+          const updatedButtons = buttons.filter(
+            (button) => button.id !== buttonId
+          );
+          setButtons(updatedButtons);
+          setButtonCount(buttonCount - 1);
+        }
+      });
   };
 
   // 배치완료되면 데이터 seat의 데이터 보낼거임.
@@ -117,7 +144,6 @@ function SeatPage() {
 
   // 드롭다운에서 store정보 받아오는 부분
   const StoreList = () => {
-    var tmpStoreList = [];
     const data = {
       session: userSession,
     };
@@ -126,11 +152,8 @@ function SeatPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        // db에서 가져온 storelist.
-        for (var i = 0; i < res.data.length; i++) {
-          tmpStoreList[i] = res.data[i];
-        }
-        setStoreList(tmpStoreList);
+        console.log(res.data.name);
+        setStoreName(res.data.name);
       });
   };
 
@@ -157,14 +180,10 @@ function SeatPage() {
         >
           <DropdownButton
             id="dropdown-basic-button"
-            title="매장을 선택하세요 "
+            title={storeName}
             onClick={StoreList}
           >
-            {storeList.map((storeName, index) => (
-              <Dropdown.Item key={index} onClick={() => storeSelect(storeName)}>
-                {storeName}
-              </Dropdown.Item>
-            ))}
+            <Dropdown.Item>{storeName}</Dropdown.Item>
           </DropdownButton>
         </div>
         <button

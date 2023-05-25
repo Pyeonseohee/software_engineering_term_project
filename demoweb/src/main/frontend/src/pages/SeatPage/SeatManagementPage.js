@@ -12,7 +12,7 @@ const SetPurchaseURL = "http://localhost:8080/api/setpurchase";
 function SeatManagementPage() {
   const ref = useRef(null);
   var test = "메가커피";
-  const [using, setUsing] = useState(false);
+  const [using, setUsing] = useState([]);
   const [userSession, setUserSession] = useState("");
   const [storeName, setStoreName] = useState(""); // 어떤 매장인지에 따라
   const [target, setTarget] = useState(null);
@@ -41,6 +41,7 @@ function SeatManagementPage() {
       })
       .then((res) => {
         setButtons(res.data);
+        // 사용중이면 초록색
       });
   };
 
@@ -59,7 +60,6 @@ function SeatManagementPage() {
       .then((res) => {
         const use = res.data[buttonId - 1].available;
         console.log(use);
-
         // 좌석이 사용중이라면
         if (use == true) {
           setUsing(use);
@@ -106,7 +106,6 @@ function SeatManagementPage() {
     console.log("-------", storeName);
     setStoreName(storeName);
   };
-
   return (
     <div>
       <Narvar user={userSession}></Narvar>
