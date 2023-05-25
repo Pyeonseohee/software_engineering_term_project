@@ -87,7 +87,7 @@ public class StoreController {
         //좌석이 이미 있으면
         if(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).isPresent()){
             Seat seat = new Seat(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get().getId(),
-                    store.get(), dto.getSeatnum(), dto.getX(), dto.getY());
+                    store.get(), true, dto.getSeatnum(), dto.getX(), dto.getY());
             seatRepository.save(seat);
             return "Success";
         }
@@ -189,7 +189,7 @@ public class StoreController {
     
     //유저에 따른 store정보 클라에 제공
     @PostMapping("/api/storeinfo")
-    public Store getStore(@RequestBody StoreInfoRequestDto dto) {
+    public Optional<Store> getStore(@RequestBody StoreInfoRequestDto dto) {
         //session 검증
         User user;
         try {
@@ -199,6 +199,20 @@ public class StoreController {
         }
         // user와 연결된 store 검색 후 반환
         Optional<Store> store = storeRepository.findById(user.getId());
-        return store.get();
+        return store;
+    }
+
+    @PostMapping("/api/menus")
+    public List<Item> getmenu(@RequestBody StoreInfoRequestDto dto) {
+        //session 검증
+        User user;
+        try {
+            user = userController.checkSession(dto.getSession());
+        } catch (Exception e) {
+            return null;
+        }
+        // user와 연결된 store 검색 후 반환
+        Optional<Store> store = storeRepository.findById(user.getId());
+        return itemRepository.findAllByStore(store.get());
     }
 }
