@@ -29,6 +29,7 @@ function SeatManagementPage() {
   const [currentButton, setCurrentButton] = useState(0);
   const [buttons, setButtons] = useState([]);
   const [available, setAvailable] = useState([]); // 사용중인지 아닌지
+  const [timers, setTimers] = useState([]); // 사용중인지 아닌지
   const [dropdownItems, setDropdownItems] = useState([]); // 메뉴 list
   const [menuPrice, setMenuPrice] = useState({});
   const [selectedMenu, setSelectedMenu] = useState(null);
@@ -76,6 +77,11 @@ function SeatManagementPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
+        var use = [false];
+        for (var i = 0; i < res.data.length; i++) {
+          use[i + 1] = res.data[i].available;
+        }
+        setAvailable(use);
         setButtons(res.data);
       });
   };
@@ -158,7 +164,9 @@ function SeatManagementPage() {
       .post(SetPurchaseURL, JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
       })
-      .then((res) => console.log(res));
+      .then((res) => {
+        console.log(res.data);
+      });
   };
 
   // testAddItemAPI
@@ -211,7 +219,7 @@ function SeatManagementPage() {
                 top: button.y,
                 width: "70px",
                 height: "70px",
-                backgroundColor: button.available ? "red" : "#F0F0F0",
+                backgroundColor: available[button.seatnum] ? "red" : "#F0F0F0",
               }}
               onContextMenu={(event) =>
                 handleRightClick(event, button.seatnum, button.available)
@@ -227,7 +235,7 @@ function SeatManagementPage() {
           container={ref}
           containerPadding={20}
         >
-          {using ? (
+          {using ? ( // 사용중이면
             <Popover id="popover-contained">
               <Popover.Header as="h3">사용중..</Popover.Header>
               <Popover.Body>
@@ -235,6 +243,7 @@ function SeatManagementPage() {
               </Popover.Body>
             </Popover>
           ) : (
+            // 사용중이 아니면
             <Popover id="popover-contained">
               <Popover.Header as="h3">
                 <CloseButton
