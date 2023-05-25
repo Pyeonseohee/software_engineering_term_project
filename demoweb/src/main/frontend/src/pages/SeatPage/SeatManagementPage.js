@@ -20,17 +20,17 @@ const AddItemURL = "http://localhost:8080/api/additem";
 
 function SeatManagementPage() {
   const ref = useRef(null);
-  var test = "메가커피";
   const [using, setUsing] = useState(false);
   const [storeName, setStoreName] = useState("매장을 선택하세요."); // 어떤 매장인지에 따라
   const [existStore, setExistStore] = useState(false);
   const [userSession, setUserSession] = useState("");
   const [target, setTarget] = useState(null);
   const [show, setShow] = useState(false);
-  const [buttonCount, setButtonCount] = useState(0);
+  const [currentButton, setCurrentButton] = useState(0);
   const [buttons, setButtons] = useState([]);
   const [available, setAvailable] = useState([]); // 사용중인지 아닌지
   const [dropdownItems, setDropdownItems] = useState([]); // 메뉴 list
+  const [menuPrice, setMenuPrice] = useState({});
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]); // 주문한 메뉴 list(장바구니)
 
@@ -82,10 +82,12 @@ function SeatManagementPage() {
 
   //오른쪽 누르면 좌석 번호, 메뉴, ..등
   const handleRightClick = (event, buttonId, available) => {
+    setCurrentButton(buttonId);
     event.preventDefault();
-    console.log(buttonId, available);
+    console.log(currentButton, available);
     fetchDropDownItems();
-    show ? setShow(false) : setShow(true);
+    setSelectedItems([]);
+    setShow(true);
     setTarget(event.target);
   };
 
@@ -112,7 +114,7 @@ function SeatManagementPage() {
 
   // 메뉴 리스트 보여주는 dropdown
   const fetchDropDownItems = () => {
-    var itemList = [];
+    var itemList = {};
     const data = {
       session: userSession,
     };
@@ -121,10 +123,12 @@ function SeatManagementPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
+        console.log(res.data);
         for (var i = 0; i < res.data.length; i++) {
-          itemList[i] = res.data[i].name;
+          itemList[res.data[i].name] = res.data[i].time;
         }
-        setDropdownItems(itemList);
+        setMenuPrice(itemList);
+        setDropdownItems(Object.keys(itemList));
         console.log(dropdownItems);
       });
   };
@@ -136,7 +140,26 @@ function SeatManagementPage() {
   };
 
   // 이용 버튼 누르면
-  const handlePurchaseButtonClick = () => {};
+  const handlePurchaseButtonClick = () => {
+    var max_time = 0;
+    var time_list = []; // 선택한 메뉴의 time
+    for (var i = 0; i < selectedItems.length; i++) {
+      time_list[i] = menuPrice[selectedItems[i]]; // 선택한 메뉴로 time찾기
+    }
+    max_time = Math.max(...time_list); // 선택한 메뉴 중 가장 높은 시간
+    const data = {
+      session: userSession,
+      name: storeName,
+      seatnum: currentButton,
+      item: Object.keys(menuPrice).find((key) => menuPrice[key] === max_time), // 시간 가장 많은 item
+    };
+    console.log(data);
+    axios
+      .post(SetPurchaseURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => console.log(res));
+  };
 
   // testAddItemAPI
   const addItem = () => {
