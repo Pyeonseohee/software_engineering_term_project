@@ -13,8 +13,9 @@ function SeatManagementPage() {
   const ref = useRef(null);
   var test = "메가커피";
   const [using, setUsing] = useState([]);
+  const [storeName, setStoreName] = useState("매장을 선택하세요."); // 어떤 매장인지에 따라
+  const [existStore, setExistStore] = useState(false);
   const [userSession, setUserSession] = useState("");
-  const [storeName, setStoreName] = useState(""); // 어떤 매장인지에 따라
   const [target, setTarget] = useState(null);
   const [show, setShow] = useState(false);
   const [buttonCount, setButtonCount] = useState(0);
@@ -27,21 +28,44 @@ function SeatManagementPage() {
   const UserInfo = { ...location.state };
   useEffect(() => {
     setUserSession(UserInfo.userSession);
-    fetchData();
-  });
+    exitStore();
+    //fetchData();
+  }, [storeName]);
 
-  const fetchData = async () => {
+  // 매장 있는지 없는지 확인
+  const exitStore = () => {
     const data = {
       session: userSession,
-      name: test,
+    };
+
+    axios
+      .post(StoreInfoURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.data != "doesn't exist.") {
+          setExistStore(true);
+          setStoreName(res.data.name);
+          console.log(res.data.name);
+          fetchData();
+        }
+      });
+  };
+
+  // 저장된 좌석 정보 받아오기
+  const fetchData = () => {
+    const data = {
+      session: userSession,
+      name: storeName,
     };
     axios
       .post(SeatInfoURL, JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
+        console.log(res.data);
         setButtons(res.data);
-        // 사용중이면 초록색
       });
   };
 
@@ -84,7 +108,6 @@ function SeatManagementPage() {
 
   // 드롭다운에서 store정보 받아오는 부분
   const StoreList = () => {
-    var tmpStoreList = [];
     const data = {
       session: userSession,
     };
@@ -93,11 +116,8 @@ function SeatManagementPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        // db에서 가져온 storelist.
-        for (var i = 0; i < res.data.length; i++) {
-          tmpStoreList[i] = res.data[i];
-        }
-        setStoreList(tmpStoreList);
+        console.log(res.data.name);
+        setStoreName(res.data.name);
       });
   };
 
@@ -106,6 +126,7 @@ function SeatManagementPage() {
     console.log("-------", storeName);
     setStoreName(storeName);
   };
+
   return (
     <div>
       <Narvar user={userSession}></Narvar>
@@ -121,20 +142,16 @@ function SeatManagementPage() {
         >
           <DropdownButton
             id="dropdown-basic-button"
-            title="매장을 선택하세요 "
+            title={storeName}
             onClick={StoreList}
           >
-            {storeList.map((storeName, index) => (
-              <Dropdown.Item key={index} onClick={() => storeSelect(storeName)}>
-                {storeName}
-              </Dropdown.Item>
-            ))}
+            <Dropdown.Item>{storeName}</Dropdown.Item>
           </DropdownButton>
         </div>
         {buttons &&
           buttons.map((button) => (
             <button
-              key={button.id}
+              key={button.seatnum}
               style={{
                 border: "none",
                 position: "absolute",
@@ -144,9 +161,9 @@ function SeatManagementPage() {
                 height: "70px",
                 backgroundColor: "#F0F0F0",
               }}
-              onContextMenu={(event) => handleRightClick(event, button.id)}
+              onContextMenu={(event) => handleRightClick(event, button.seatnum)}
             >
-              {button.id}
+              {button.seatnum}
             </button>
           ))}
         <Overlay

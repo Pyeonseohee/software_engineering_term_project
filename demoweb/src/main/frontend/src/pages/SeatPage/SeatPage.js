@@ -15,6 +15,7 @@ function SeatPage() {
   const [userSession, setUserSession] = useState("");
   const ref = useRef(null);
   const [storeName, setStoreName] = useState("매장을 선택하세요."); // 어떤 매장인지에 따라
+  const [existStore, setExistStore] = useState(false);
   const [isDragging, setIsDragging] = useState(false); // 드래깅 여부
   const [draggingButton, setDraggingButton] = useState(null); // 드래깅 버튼
   const [buttonCount, setButtonCount] = useState(1); // 버튼 몇 개 있는지
@@ -26,26 +27,50 @@ function SeatPage() {
   const UserInfo = { ...location.state };
   useEffect(() => {
     setUserSession(UserInfo.userSession);
+    exitStore();
     //fetchData();
-  }, []);
+  }, [storeName]);
 
-  // // 저장된 좌석 정보 받아오기
-  // const fetchData = async () => {
-  //   const data = {
-  //     session: userSession,
-  //     name: test,
-  //   };
-  //   axios
-  //     .post(SeatInfoURL, JSON.stringify(data), {
-  //       headers: { "Content-Type": "application/json" },
-  //     })
-  //     .then((res) => {
-  //       setButtons(res.data);
-  //     });
-  // };
+  // 매장 있는지 없는지 확인
+  const exitStore = () => {
+    const data = {
+      session: userSession,
+    };
+
+    axios
+      .post(StoreInfoURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.data != "doesn't exist.") {
+          setExistStore(true);
+          setStoreName(res.data.name);
+          console.log(res.data.name);
+          fetchData();
+        }
+      });
+  };
+
+  // 저장된 좌석 정보 받아오기
+  const fetchData = () => {
+    const data = {
+      session: userSession,
+      name: storeName,
+    };
+    axios
+      .post(SeatInfoURL, JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setButtons(res.data);
+      });
+  };
 
   // 버튼을 드래그하여 옮길 때
   const handleMouseDown = (event, buttonId) => {
+    console.log("test");
     setIsDragging(true);
     setDraggingButton(buttonId);
   };
@@ -54,7 +79,7 @@ function SeatPage() {
   const handleMouseMove = (event) => {
     if (isDragging) {
       const updatedButtons = buttons.map((button) => {
-        if (button.id === draggingButton) {
+        if (button.seatnum === draggingButton) {
           return {
             ...button,
             x: event.clientX,
@@ -77,7 +102,7 @@ function SeatPage() {
   const handleAddButtonClick = () => {
     if (!isDragging) {
       const newButton = {
-        id: buttonCount,
+        seatnum: buttonCount,
         x: 150,
         y: 150,
       };
@@ -103,18 +128,28 @@ function SeatPage() {
     const data = {
       session: userSession,
       name: test,
-      seatnum: buttonId,
+      seatNum: buttonId,
     };
     console.log(JSON.stringify(data));
     axios
-      .delete(SetSeatURL, JSON.stringify(data), {
-        headers: { "Content-Type": "application/json" },
-      })
+      .delete(
+        SetSeatURL,
+        {
+          data: {
+            session: userSession,
+            name: test,
+            seatNum: buttonId,
+          },
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
       .then((res) => {
         console.log(res);
         if (!isDragging) {
           const updatedButtons = buttons.filter(
-            (button) => button.id !== buttonId
+            (button) => button.seatnum !== buttonId
           );
           setButtons(updatedButtons);
           setButtonCount(buttonCount - 1);
@@ -138,7 +173,7 @@ function SeatPage() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        console.log(res);
+        //console.log(res);
       });
   };
 
@@ -200,7 +235,7 @@ function SeatPage() {
         {buttons &&
           buttons.map((button) => (
             <button
-              key={button.id}
+              key={button.seatnum}
               style={{
                 border: "none",
                 position: "absolute",
@@ -210,11 +245,11 @@ function SeatPage() {
                 height: "70px",
                 backgroundColor: "#F0F0F0",
               }}
-              onMouseDown={(event) => handleMouseDown(event, button.id)}
-              onDoubleClick={() => handleButtonDoubleClick(button.id)}
-              onMouseUp={(event) => handleSendSeatInfo(event, button.id)}
+              onMouseDown={(event) => handleMouseDown(event, button.seatnum)}
+              onDoubleClick={() => handleButtonDoubleClick(button.seatnum)}
+              onMouseUp={(event) => handleSendSeatInfo(event, button.seatnum)}
             >
-              {button.id}
+              {button.seatnum}
             </button>
           ))}
       </div>
