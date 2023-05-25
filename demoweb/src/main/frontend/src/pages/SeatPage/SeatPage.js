@@ -65,6 +65,7 @@ function SeatPage() {
       .then((res) => {
         console.log(res.data);
         setButtons(res.data);
+        setButtonCount(res.data.length + 1);
       });
   };
 
