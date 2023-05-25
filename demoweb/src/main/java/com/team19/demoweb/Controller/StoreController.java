@@ -87,11 +87,11 @@ public class StoreController {
         //좌석이 이미 있으면
         if(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).isPresent()){
             Seat seat = new Seat(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get().getId(),
-                    store.get(), true, dto.getSeatnum(), dto.getX(), dto.getY());
+                    store.get(), dto.getSeatnum(), dto.getX(), dto.getY());
             seatRepository.save(seat);
             return "Success";
         }
-        Seat seat = new Seat(store.get(), dto.getSeatnum(), dto.getX(), dto.getY());
+        Seat seat = new Seat(store.get(), true, dto.getSeatnum(), dto.getX(), dto.getY());
         seatRepository.save(seat);
         return "Success";
     }
