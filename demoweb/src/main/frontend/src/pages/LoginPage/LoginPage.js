@@ -105,7 +105,6 @@ function LoginPage(props) {
               <br />
               <pre>
                 <a href="http://localhost:3000/register">회원가입</a>{" "}
-                <a href="http://localhost:3000/findPwd">비밀번호 찾기</a>
               </pre>
               <button className="button" type="submit" onClick={onClickLogin}>
                 로그인
