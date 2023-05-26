@@ -27,7 +27,7 @@ function ProductManagement() {
     setUserSession(userInfo.userSession);
     fetchStoreInfo();
     fetchMenus();
-  }, [storeInfo]);
+  });
 
   const fetchStoreInfo = () => {
     console.log(userSession);

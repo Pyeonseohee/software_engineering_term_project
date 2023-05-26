@@ -9,16 +9,17 @@ import {
   CloseButton,
 } from "react-bootstrap";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import seatTimer from "./SeatTimer";
 import Narvar from "../MapPage/Narvar";
 import Swal from "sweetalert2"; // alert 디자인
 import axios from "axios";
+import SeatTimer from "./SeatTimer";
 
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
 const StoreInfoURL = "http://localhost:8080/api/storeinfo";
 const SetStoreURL = "http://localhost:8080/api/setstore";
 const SetPurchaseURL = "http://localhost:8080/api/setpurchase";
 const GetMenusURL = "http://localhost:8080/api/menus";
-const AddItemURL = "http://localhost:8080/api/additem";
 const SeatAvailableURL = "http://localhost:8080/api/seatavailable";
 
 function SeatManagementPage() {
@@ -27,14 +28,15 @@ function SeatManagementPage() {
   const [existStore, setExistStore] = useState(false);
   const [userSession, setUserSession] = useState("");
   const [target, setTarget] = useState(null);
-  const [show, setShow] = useState(false);
-  const [currentButton, setCurrentButton] = useState(0);
-  const [buttons, setButtons] = useState([]);
+  const [show, setShow] = useState(false); // Popover 보여줄지 안보여줄지
+  const [currentButton, setCurrentButton] = useState(0); // 현재 눌려진 버튼
+  const [buttons, setButtons] = useState([]); // 좌석 위치
   const [available, setAvailable] = useState([]); // 사용중인지 아닌지
-  const [timers, setTimers] = useState([]); // timer
+  const [endTimeString, setEndTimeString] = useState("");
+  const [timer, setTimer] = useState(0); // timer
   const [dropdownItems, setDropdownItems] = useState([]); // 메뉴 list
-  const [menuPrice, setMenuPrice] = useState({});
-  const [selectedMenu, setSelectedMenu] = useState(null);
+  const [menuPrice, setMenuPrice] = useState({}); // menu와 가격담은 객체.
+  const [selectedMenu, setSelectedMenu] = useState(null); // 선택된 메뉴 list
   const [selectedItems, setSelectedItems] = useState([]); // 주문한 메뉴 list(장바구니)
 
   // user session 받아오는 부분
@@ -42,27 +44,27 @@ function SeatManagementPage() {
   const location = useLocation();
   const UserInfo = { ...location.state };
   useEffect(() => {
-    setUserSession(UserInfo.userSession);
-    confirmStore();
-  }, [storeName, available]);
+    setUserSession(UserInfo.userSession); // userSession받아오기
+    confirmStore(); // session기반으로 매장 여부 확인
+  });
 
   // 매장 있는지 없는지 확인
   const confirmStore = () => {
     const data = {
       session: userSession,
     };
-
     axios
       .post(StoreInfoURL, JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
         if (res.data != null) {
-          // 매장이 없으면
-          setExistStore(true);
-          setStoreName(res.data.name);
-          fetchData();
+          // 매장이 존재하면
+          setExistStore(true); // 매장 존재 여부 true
+          setStoreName(res.data.name); // 매장 이름 update
+          fetchData(); // 그 이후에 매장 이름 기준으로 좌석정보 불러오기
         } else {
+          // 매장이 없으면
           setExistStore(false);
         }
       });
@@ -80,24 +82,21 @@ function SeatManagementPage() {
       })
       .then((res) => {
         var use = [false];
-        var time = [0];
         for (var i = 0; i < res.data.length; i++) {
-          console.log(res.data[i].available);
-          use[i + 1] = res.data[i].available;
-          time[i + 1] = 0; // 여기 db들어가야함.
+          use[i + 1] = res.data[i].available; // 사용중인지 아닌지
         }
-        setAvailable(use);
-        setButtons(res.data);
+        setAvailable(use); // 받아온 좌석의 사용여부 update
+        setButtons(res.data); // 받아온 좌석 내용 update
       });
   };
 
-  //오른쪽 누르면 좌석 번호, 메뉴, ..등
-  const handleRightClick = (event, buttonId, available) => {
-    setCurrentButton(buttonId);
+  //오른쪽 누르면 이용중인지, 메뉴 추가할 건지 등등
+  const handleRightClick = (event, buttonId) => {
+    setCurrentButton(buttonId); // 현재 버튼뭔지
     event.preventDefault();
-    fetchDropDownItems();
-    setSelectedItems([]);
-    setShow(true);
+    fetchDropDownItems(); // DB에서 매장 메뉴 가져오기
+    setSelectedItems([]); // 현재 선택된 메뉴 list
+    setShow(true); // popover창 보여주기
     setTarget(event.target);
   };
 
@@ -113,11 +112,6 @@ function SeatManagementPage() {
       .then((res) => {
         setStoreName(res.data.name);
       });
-  };
-
-  // 드롭다운에서 store 이름 눌렀을 때 실행되는 함수.
-  const storeSelect = (storeName) => {
-    setStoreName(storeName);
   };
 
   // 메뉴 리스트 보여주는 dropdown
@@ -136,7 +130,6 @@ function SeatManagementPage() {
         }
         setMenuPrice(itemList);
         setDropdownItems(Object.keys(itemList));
-        console.log(dropdownItems);
       });
   };
 
@@ -175,7 +168,6 @@ function SeatManagementPage() {
 
   // 종료 버튼 누르면
   const handleEndButtonClick = () => {
-    console.log("test");
     const data = {
       session: userSession,
       seatnum: currentButton,
@@ -215,30 +207,10 @@ function SeatManagementPage() {
           headers: { "Content-Type": "application/json" },
         })
         .then((res) => {
-          console.log("success");
           setExistStore(true);
           setStoreName(result.value);
         });
     });
-  };
-
-  // testAddItemAPI
-  const addItem = () => {
-    console.log("test");
-    const data = {
-      session: userSession,
-      storename: storeName,
-      itemname: "모카",
-      price: 6000,
-      time: 70000,
-    };
-    axios
-      .post(AddItemURL, JSON.stringify(data), {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        console.log(res);
-      });
   };
 
   const notExistStore = () => {
@@ -297,9 +269,7 @@ function SeatManagementPage() {
                   ? "#F0F0F0"
                   : "#1B9C85",
               }}
-              onContextMenu={(event) =>
-                handleRightClick(event, button.seatnum, button.available)
-              }
+              onContextMenu={(event) => handleRightClick(event, button.seatnum)}
             >
               {button.seatnum}
             </button>
@@ -326,6 +296,12 @@ function SeatManagementPage() {
               </Popover.Header>
               <Popover.Body>
                 <strong>시간을 추가하시겠습니까?</strong>
+                <h2>
+                  <SeatTimer
+                    userSession={userSession}
+                    currentButton={currentButton}
+                  />
+                </h2>
                 <br />
                 <br />
                 메뉴를 선택해주세요
@@ -403,7 +379,6 @@ function SeatManagementPage() {
             </Popover>
           )}
         </Overlay>
-        <button onClick={addItem}>메뉴 추가</button>
       </div>
     );
   };
@@ -415,9 +390,7 @@ function SeatManagementPage() {
   );
 }
 
-// react-bootstrap
-// The forwardRef is important!!
-// Dropdown needs access to the DOM node in order to position the Menu
+// react-bootstrap 라이브러리
 const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
   <a
     href=""
