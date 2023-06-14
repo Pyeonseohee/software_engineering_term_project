@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
-    Store findByNameAndUser(String name, User user);
+    Store findByNameAndUser(String name, User user); // 유저와 이름으로 매장 검색
     List<Store> findByUser(User user); // 유저를 활용하여 매장 검색
 }

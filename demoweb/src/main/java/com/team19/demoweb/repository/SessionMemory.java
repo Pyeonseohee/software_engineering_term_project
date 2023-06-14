@@ -14,12 +14,13 @@ public class SessionMemory {
     public Long findUser(String sessionKey){
         return repo.get(sessionKey);
     }
-
+    // 세션 생성, 해시맵에 저장
     public String createSession(User user){
         String sessionId = UUID.randomUUID().toString();
         repo.put(sessionId , user.getId());
         return sessionId;
     }
+    // 세션 제거
     public String deleteSession(String sessionKey){
         if(repo.containsKey(sessionKey)){
             repo.remove(sessionKey);

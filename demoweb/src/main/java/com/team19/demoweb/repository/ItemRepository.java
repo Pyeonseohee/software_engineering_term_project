@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findAllByStore(Store store);
-    Item findByStoreAndName(Store store, String name);
+    List<Item> findAllByStore(Store store); //해당 store의 전체 item을 List 형식으로 반환
+    Item findByStoreAndName(Store store, String name); // store와 item의 이름을 기반으로 탐색
 }

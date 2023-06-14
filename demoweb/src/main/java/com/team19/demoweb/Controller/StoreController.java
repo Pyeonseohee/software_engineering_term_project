@@ -74,6 +74,7 @@ public class StoreController {
     
     @PostMapping("/api/setseat")//seat 생성
     public String setSeat(@RequestBody SetSeatRequestDto dto) {
+        // 세션 검증
         User user;
         try {
             user = userController.checkSession(dto.getSession());
@@ -88,6 +89,7 @@ public class StoreController {
             seatRepository.save(seat);
             return "Success";
         }
+        // 새 seat 객체 생성 후 저장
         Seat seat = new Seat(store.get(), true, dto.getSeatnum(), dto.getX(), dto.getY());
         seat.setEndtime(null);
         seatRepository.save(seat);
@@ -96,12 +98,14 @@ public class StoreController {
     
     @DeleteMapping("/api/setseat")//seat 제거
     public String deleteSeat(@RequestBody DeleteSeatDto dto) {
+        //session 검증
         User user;
         try {
             user = userController.checkSession(dto.getSession());
         } catch (Exception e) {
             return "Invalid Session";
         }
+        //repository에서 해당 seat 탐색 후 삭제
         Optional<Store> store = storeRepository.findById(user.getId());
         Seat seat = new Seat(seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get().getId(), store.get(), dto.getSeatnum());
         seatRepository.delete(seat);
@@ -133,6 +137,7 @@ public class StoreController {
         } catch (Exception e) {
             return 0;
         }
+        // store에서 item을 찾고, seat에 할당 및 시간 설정
         Optional<Store> store = storeRepository.findById(user.getId());
         Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         seat.setAvailable(false);
@@ -167,6 +172,7 @@ public class StoreController {
         }
         Optional<Store> store = storeRepository.findById(user.getId());
         Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
+        //seat의 isAvaliable 값에 따라
         if (seat.isAvailable()) {
             seat.setAvailable(false);
             seatRepository.save(seat);
@@ -181,12 +187,14 @@ public class StoreController {
     
     @PostMapping("/api/timeover")//좌석시간 끝난거 받음
     public String endseatInfo(@RequestBody TimeoverDto dto) {
+        // 세션 검증
         User user;
         try {
             user = userController.checkSession(dto.getSession());
         } catch (Exception e) {
             return null;
         }
+        // store에서 좌석시간이 끝난 seat 탐색 후 시간 최신화
         Optional<Store> store = storeRepository.findById(user.getId());
         Seat seat = seatRepository.findByStoreAndSeatnum(store.get(), dto.getSeatnum()).get();
         seat.setAvailable(true);
@@ -197,12 +205,14 @@ public class StoreController {
     
     @PostMapping("/api/additem")
     public String additem(@RequestBody AddItemDto dto) {
+        //세션 검증
         User user;
         try {
             user = userController.checkSession(dto.getSession());
         } catch (Exception e) {
             return null;
         }
+        // 새로운 제품을 store와 연관관계 맵핑하여 레포지토리에 저장
         Optional<Store> store = storeRepository.findById(user.getId());
         Item item = new Item(store.get(), dto.getItemname(), dto.getPrice(), dto.getTime());
         itemRepository.save(item);
@@ -217,6 +227,7 @@ public class StoreController {
         } catch (Exception e) {
             return null;
         }
+        // Store에서 해당 item을 찾은 후 삭제
         Optional<Store> store = storeRepository.findById(user.getId());
         Item item = itemRepository.findByStoreAndName(store.get(), dto.getItemname());
         itemRepository.delete(item);
