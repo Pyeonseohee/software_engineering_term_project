@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-
-import Narvar from "../MapPage/Narvar";
 import { useLocation } from "react-router-dom";
 
-import axios from "axios";
+import Narvar from "../MapPage/Narvar"; // common Narvar page(on the top of page)
+import axios from "axios"; // HTTP communication with spring
+
+// HTTP communication with spring Controller Route URL List
 const additemURL = "http://localhost:8080/api/additem";
 const deleteitemURL = "http://localhost:8080/api/deleteitem";
 const storeInfoURL = "http://localhost:8080/api/storeinfo";
@@ -13,37 +14,34 @@ function ProductManagement() {
   const [userSession, setUserSession] = useState("");
   const [storeInfo, setStoreInfo] = useState("");
   const [menu, setMenu] = useState({
-    // 현재 사용자가 입력한 값
+    // user's input init
     name: "",
     cost: "",
     time: "",
   });
-  const [menus, setMenus] = useState([]); // 배열
+  const [menus, setMenus] = useState([]);
 
   const location = useLocation();
   const userInfo = { ...location.state };
 
   useEffect(() => {
-    setUserSession(userInfo.userSession);
+    setUserSession(userInfo.userSession); // get Session after login
     fetchStoreInfo();
     fetchMenus();
   });
 
   const fetchStoreInfo = () => {
-    console.log(userSession);
     const data = {
       session: userSession,
     };
-    console.log(storeInfoURL);
-    console.log(JSON.stringify(data));
     axios
       .post(storeInfoURL, JSON.stringify(data), {
+        //then response from spring store in variable
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
         if (res != null) {
-          console.log(res.data);
-          setStoreInfo(res.data.name);
+          setStoreInfo(res.data.name); // get StoreInfo in variable
         }
       });
   };
@@ -54,6 +52,7 @@ function ProductManagement() {
   };
 
   const handleAddMenu = () => {
+    // prevent blank input
     if (
       menu.name.trim() === "" ||
       menu.cost.trim() === "" ||
@@ -70,7 +69,6 @@ function ProductManagement() {
       time: menu.time,
     };
 
-    console.log(JSON.stringify(data));
     axios
       .post(additemURL, JSON.stringify(data), {
         headers: {
@@ -79,7 +77,7 @@ function ProductManagement() {
       })
       .then((response) => {
         setMenus([...menus, response.data]);
-        setMenu({ name: "", cost: "", time: "" });
+        setMenu({ name: "", cost: "", time: "" }); // init after user's addItem
       })
       .catch((error) => {
         console.error("메뉴 추가 에러:", error);
@@ -103,7 +101,7 @@ function ProductManagement() {
         },
       })
       .then(() => {
-        fetchMenus();
+        fetchMenus(); // menu delete and rerendering after delete
       })
       .catch((error) => {
         console.error("메뉴 삭제 에러:", error);
@@ -121,7 +119,7 @@ function ProductManagement() {
         },
       })
       .then((response) => {
-        setMenus(response.data);
+        setMenus(response.data); // menu list get
       })
       .catch((error) => {
         console.error("메뉴 목록 불러오기 에러:", error);

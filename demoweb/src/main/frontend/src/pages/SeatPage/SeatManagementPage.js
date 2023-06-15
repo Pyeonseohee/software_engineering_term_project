@@ -8,13 +8,14 @@ import {
   ListGroup,
   CloseButton,
 } from "react-bootstrap";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import seatTimer from "./SeatTimer";
-import Narvar from "../MapPage/Narvar";
-import Swal from "sweetalert2"; // alert 디자인
-import axios from "axios";
-import SeatTimer from "./SeatTimer";
+import { useLocation } from "react-router-dom";
 
+import Narvar from "../MapPage/Narvar"; // common Narvar page(on the top of page)
+import Swal from "sweetalert2"; // alert design
+import axios from "axios"; // HTTP communication with spring
+import SeatTimer from "./SeatTimer"; // show Timer
+
+// HTTP communication with spring Controller Route URL List
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
 const StoreInfoURL = "http://localhost:8080/api/storeinfo";
 const SetStoreURL = "http://localhost:8080/api/setstore";
@@ -24,31 +25,30 @@ const SeatAvailableURL = "http://localhost:8080/api/seatavailable";
 
 function SeatManagementPage() {
   const ref = useRef(null);
-  const [storeName, setStoreName] = useState("매장을 선택하세요."); // 어떤 매장인지에 따라
+  const [storeName, setStoreName] = useState("매장을 선택하세요."); // depending on which store
   const [existStore, setExistStore] = useState(false);
   const [userSession, setUserSession] = useState("");
   const [target, setTarget] = useState(null);
-  const [show, setShow] = useState(false); // Popover 보여줄지 안보여줄지
-  const [currentButton, setCurrentButton] = useState(0); // 현재 눌려진 버튼
-  const [buttons, setButtons] = useState([]); // 좌석 위치
-  const [available, setAvailable] = useState([]); // 사용중인지 아닌지
+  const [show, setShow] = useState(false); // whether show PopOver or not
+  const [currentButton, setCurrentButton] = useState(0); // current clicked button
+  const [buttons, setButtons] = useState([]); // seat position
+  const [available, setAvailable] = useState([]); // wheter the seat using or not
   const [endTimeString, setEndTimeString] = useState("");
   const [timer, setTimer] = useState(0); // timer
-  const [dropdownItems, setDropdownItems] = useState([]); // 메뉴 list
-  const [menuPrice, setMenuPrice] = useState({}); // menu와 가격담은 객체.
-  const [selectedMenu, setSelectedMenu] = useState(null); // 선택된 메뉴 list
-  const [selectedItems, setSelectedItems] = useState([]); // 주문한 메뉴 list(장바구니)
+  const [dropdownItems, setDropdownItems] = useState([]); // menu list
+  const [menuPrice, setMenuPrice] = useState({}); // menu and price object
+  const [selectedMenu, setSelectedMenu] = useState(null); // selected menu list
+  const [selectedItems, setSelectedItems] = useState([]); // ordered menu list
 
-  // user session 받아오는 부분
-  // 저장했던 버튼의 위치정보 받아 다시 rendering
+  // receive the location information of the saved button and renders it again
   const location = useLocation();
   const UserInfo = { ...location.state };
   useEffect(() => {
-    setUserSession(UserInfo.userSession); // userSession받아오기
-    confirmStore(); // session기반으로 매장 여부 확인
+    setUserSession(UserInfo.userSession); // get Session after login
+    confirmStore(); // check for store based on session
   });
 
-  // 매장 있는지 없는지 확인
+  // Check if there is a store or not
   const confirmStore = () => {
     const data = {
       session: userSession,
@@ -59,18 +59,18 @@ function SeatManagementPage() {
       })
       .then((res) => {
         if (res.data != null) {
-          // 매장이 존재하면
-          setExistStore(true); // 매장 존재 여부 true
-          setStoreName(res.data.name); // 매장 이름 update
-          fetchData(); // 그 이후에 매장 이름 기준으로 좌석정보 불러오기
+          // If there's a store
+          setExistStore(true); // Existence of store set true
+          setStoreName(res.data.name); // update store name
+          fetchData(); // after that, get seat information based on store name
         } else {
-          // 매장이 없으면
+          // Existence of store set false
           setExistStore(false);
         }
       });
   };
 
-  // 저장된 좌석 정보 받아오기
+  // get stored seat information
   const fetchData = () => {
     const data = {
       session: userSession,
@@ -83,24 +83,24 @@ function SeatManagementPage() {
       .then((res) => {
         var use = [false];
         for (var i = 0; i < res.data.length; i++) {
-          use[i + 1] = res.data[i].available; // 사용중인지 아닌지
+          use[i + 1] = res.data[i].available; // whether it's in use or not
         }
-        setAvailable(use); // 받아온 좌석의 사용여부 update
-        setButtons(res.data); // 받아온 좌석 내용 update
+        setAvailable(use); // update on the use of the seats received
+        setButtons(res.data); // updated seat contents received
       });
   };
 
-  //오른쪽 누르면 이용중인지, 메뉴 추가할 건지 등등
+  // if you press the right, whether you are using it or not, whether you want to add a menu, etc
   const handleRightClick = (event, buttonId) => {
-    setCurrentButton(buttonId); // 현재 버튼뭔지
+    setCurrentButton(buttonId); // current Button id set
     event.preventDefault();
-    fetchDropDownItems(); // DB에서 매장 메뉴 가져오기
-    setSelectedItems([]); // 현재 선택된 메뉴 list
-    setShow(true); // popover창 보여주기
+    fetchDropDownItems(); // get store's menu in DB
+    setSelectedItems([]); // current selected menu
+    setShow(true); // popover show set true
     setTarget(event.target);
   };
 
-  // 드롭다운에서 store정보 받아오는 부분
+  // where store information is received from the drop-down
   const StoreList = () => {
     const data = {
       session: userSession,
@@ -114,7 +114,7 @@ function SeatManagementPage() {
       });
   };
 
-  // 메뉴 리스트 보여주는 dropdown
+  // Dropdown showing menu list
   const fetchDropDownItems = () => {
     var itemList = {};
     const data = {
@@ -133,25 +133,25 @@ function SeatManagementPage() {
       });
   };
 
-  // 메뉴 선택하면 List 보여줌
+  // show list when menu is selected
   const handleMenuSelect = (menu) => {
     setSelectedItems((prevItems) => [...prevItems, menu]);
     setSelectedMenu(menu);
   };
 
-  // 이용 버튼 누르면
+  // Using button click event
   const handlePurchaseButtonClick = () => {
     var max_time = 0;
-    var time_list = []; // 선택한 메뉴의 time
+    var time_list = [];
     for (var i = 0; i < selectedItems.length; i++) {
-      time_list[i] = menuPrice[selectedItems[i]]; // 선택한 메뉴로 time찾기
+      time_list[i] = menuPrice[selectedItems[i]]; // find time with the selected menu
     }
-    max_time = Math.max(...time_list); // 선택한 메뉴 중 가장 높은 시간
+    max_time = Math.max(...time_list); // highest time of the selected menu
     const data = {
       session: userSession,
       name: storeName,
       seatnum: currentButton,
-      item: Object.keys(menuPrice).find((key) => menuPrice[key] === max_time), // 시간 가장 많은 item
+      item: Object.keys(menuPrice).find((key) => menuPrice[key] === max_time), // The most time item
     };
     setShow(false);
     axios
@@ -166,7 +166,7 @@ function SeatManagementPage() {
       });
   };
 
-  // 종료 버튼 누르면
+  // Termination button click event
   const handleEndButtonClick = () => {
     const data = {
       session: userSession,
@@ -185,6 +185,7 @@ function SeatManagementPage() {
       });
   };
 
+  // Existence user's store is false, then user can register user's store
   const handleSetStoreButtonClick = () => {
     new Swal({
       title: "매장 등록하기",
@@ -213,6 +214,7 @@ function SeatManagementPage() {
     });
   };
 
+  // when user's store doesn't exist, show below UI
   const notExistStore = () => {
     return (
       <div
@@ -234,6 +236,7 @@ function SeatManagementPage() {
     );
   };
 
+  // when user's store exist, show below UI
   const ifExistStore = () => {
     return (
       <div
@@ -281,7 +284,7 @@ function SeatManagementPage() {
           container={ref}
           containerPadding={20}
         >
-          {!available[currentButton] ? ( // 사용중이면
+          {!available[currentButton] ? ( // if Using
             <Popover id="popover-contained">
               <Popover.Header as="h3">
                 <CloseButton
@@ -334,7 +337,7 @@ function SeatManagementPage() {
               </Popover.Body>
             </Popover>
           ) : (
-            // 사용중이 아니면
+            // If not using
             <Popover id="popover-contained">
               <Popover.Header as="h3">
                 <CloseButton
@@ -390,7 +393,7 @@ function SeatManagementPage() {
   );
 }
 
-// react-bootstrap 라이브러리
+// react-bootstrap library
 const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
   <a
     href=""

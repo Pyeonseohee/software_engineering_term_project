@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // alert 디자인
-import axios from "axios";
+import Swal from "sweetalert2"; //design alert
+import axios from "axios"; // HTTP communication with spring
 
+// HTTP communication with spring Controller Route URL List
 const GetEndTimeURL = "http://localhost:8080/api/endtime";
 const SeatAvailableURL = "http://localhost:8080/api/seatavailable";
 
@@ -14,23 +15,23 @@ const SeatTimer = (props) => {
       session: userSession,
       seatnum: currentButton,
     };
-    // 버튼을 눌렀을 때, DB로부터 종료 시간을 가져오는 비동기 함수
+    // asynchronous function to get end time from DB when seat bitton is pressed
     const fetchEndTime = () => {
       axios
         .post(GetEndTimeURL, JSON.stringify(data), {
           headers: { "Content-Type": "application/json" },
         })
         .then((res) => {
-          setEndTime(new Date(res.data)); // 종료 시간을 Date 객체로 변환하여 저장
+          setEndTime(new Date(res.data)); // convert the end time to a Date object and save it
           console.log(res.data);
         });
     };
 
-    fetchEndTime(); // 함수 호출하여 종료 시간을 가져옴
+    fetchEndTime(); // get end time
   }, []);
 
   useEffect(() => {
-    // 종료 시간이 설정되었을 때, 남은 시간을 계산하는 타이머 함수
+    // timer function that calculates the remaining time when the end time is set
     const timer = setInterval(() => {
       if (endTime) {
         const currentTime = new Date().getTime();
@@ -54,14 +55,14 @@ const SeatTimer = (props) => {
             });
         }
       }
-    }, 1000); // 1초마다 업데이트
+    }, 1000); // update every second
 
     return () => {
-      clearInterval(timer); // 컴포넌트 언마운트 시 타이머 정리
+      clearInterval(timer); // clean up timers when components are unmounted
     };
   }, [endTime]);
 
-  // 시간을 시:분:초 형식으로 변환하는 함수
+  // functions that convert time into hour:minute:second format
   const formatTimer = () => {
     const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
@@ -71,6 +72,7 @@ const SeatTimer = (props) => {
     } : ${seconds < 10 ? "0" + seconds : seconds}`;
   };
 
+  // return to rendering
   return (
     <div>
       <div>{formatTimer()}</div>

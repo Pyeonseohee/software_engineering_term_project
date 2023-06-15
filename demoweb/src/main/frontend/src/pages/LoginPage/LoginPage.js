@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import { Card, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import CryptoJS from "crypto-js"; // 암호화
-import Swal from "sweetalert2"; // alert 디자인
-import axios from "axios";
+import Swal from "sweetalert2"; // alert design
+import axios from "axios"; // HTTP communication with spring
+import Narvar from "../MapPage/Narvar"; // common Narvar page(on the top of page)
+import "./button.css"; // decorate to React component
 
-import Narvar from "../MapPage/Narvar";
-import "./button.css";
-
+// HTTP communication with spring Controller Route URL List
 const LoginURL = "http://localhost:8080/api/login";
 const SessionURL = "http://localhost:8080/api/userinfo";
 var session = "";
@@ -20,20 +19,22 @@ function LoginPage(props) {
   const [Password, setPassword] = useState("");
 
   const onEmailHandler = (event) => {
+    // email that user write
     setEmail(event.currentTarget.value);
   };
 
   const onPasswordHandler = (event) => {
+    // password thar user write
     setPassword(event.currentTarget.value);
   };
 
   const onSubmitHandler = (event) => {
+    // prevent page refresh
     event.preventDefault();
   };
 
   const onClickLogin = (event) => {
-    const secretKey = "0509";
-    console.log("click login");
+    // Login Click event
     const data = {
       email: Email,
       pw: Password,
@@ -41,30 +42,29 @@ function LoginPage(props) {
 
     axios
       .post(LoginURL, JSON.stringify(data), {
-        // 이메일 데이터만 보내고
+        // send data with JSON
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        // 아이디가 존재하지 않으면
         if (res.data == "login fail") {
+          // if user's password incorrect
           new Swal({
             title: "비밀번호가 일치하지 않습니다.",
             icon: "error",
           });
         } else if (res.data == "sign up first") {
+          // if user's is doesn't register
           new Swal({
             title: "존재하지 않는 회원입니다. 회원가입부터 해주세요",
             icon: "warning",
           });
         } else {
-          session = res.data;
-          console.log(session);
-          // 아이디가 존재하면
+          session = res.data; // if user's id and user's password correct in DB
           new Swal({
             title: "로그인 되었습니다!",
             icon: "success",
           }).then(function () {
-            navigate("/seatManage", { state: { userSession: session } });
+            navigate("/seatManage", { state: { userSession: session } }); // after login, move page seatManage with session
           });
         }
       })
@@ -78,6 +78,7 @@ function LoginPage(props) {
       <Narvar></Narvar>
       <div
         style={{
+          // center arrangement
           display: "flex",
           justifyContent: "center",
           alignItems: "center",

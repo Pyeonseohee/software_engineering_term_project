@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row } from "react-bootstrap";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-import CryptoJS from "crypto-js"; // 암호화
-import Swal from "sweetalert2"; // alert 디자인
-import axios from "axios";
+import Swal from "sweetalert2"; // alert design
+import axios from "axios"; // HTTP communication with spring
+import Narvar from "../MapPage/Narvar"; // common Narvar page(on the top of page)
 
-import Narvar from "../MapPage/Narvar";
-
+// HTTP communication with spring Controller Route URL List
 const userInfoURL = "http://localhost:8080/api/userinfo";
 const logoutURL = "http://localhost:8080/api/logout";
 const exitURL = "http://localhost:8080/api/exit";
@@ -22,50 +21,51 @@ function UserInfo(props) {
   const location = useLocation();
   const UserInfo = { ...location.state };
   useEffect(() => {
-    setUserSession(UserInfo.userSession);
+    setUserSession(UserInfo.userSession); // store user's session in variable
   });
 
-  // userInfo에게 보낼 데이터
   const data = {
     session: userSession,
-    pw: "gachon",
   };
 
   axios
     .post(userInfoURL, JSON.stringify(data), {
+      // send data with JSON
       headers: { "Content-Type": "application/json" },
     })
     .then((res) => {
-      setEmail(res.data.email); // 화면에 이메일과 이름 출력
+      setEmail(res.data.email); //then response from spring store in variable
       setName(res.data.name);
     });
 
-  // 로그아웃 핸들러
+  // Logout button click event
   const LogoutButtonHandler = (event) => {
     new Swal({
+      // alert design
       icon: "question",
       title: "로그아웃 하시겠습니까?",
       showCancelButton: true,
       confirmButtonText: "예",
       cancelButtonText: "아니요",
     }).then((result) => {
-      const data = {
-        session: userSession,
-      };
       if (result.isConfirmed) {
+        // user clicks "Yes" button
         axios
           .post(logoutURL, JSON.stringify(data), {
+            //then response from spring store in variable
             headers: { "Content-Type": "application/json" },
           })
           .then((res) => {
             if (res.data == "Log out completed") {
+              // if user's session vaild in backend, Logout complete
               new Swal({
                 icon: "success",
                 title: "로그아웃 되었습니다.",
               }).then(function () {
-                navigate("/");
+                navigate("/"); // and then move to login page
               });
             } else if (res.data == "Invalid Session") {
+              // if user's session invaild in backend, then print "invalid session"
               new Swal({
                 icon: "warning",
                 title: "유효하지 않는 세션입니다.",
@@ -76,7 +76,7 @@ function UserInfo(props) {
     });
   };
 
-  // 탈퇴 핸들러
+  // Exit button click event
   const ExitButtonHandler = (event) => {
     var tmpPwd = "";
     new Swal({
@@ -109,11 +109,13 @@ function UserInfo(props) {
             })
             .then((res) => {
               if (res.data == "Password Incorrect") {
+                // if user's input PW incorrect, exit doesn't proceed.
                 new Swal({
                   icon: "error",
                   title: "현재 비밀번호와\n일치하지 않습니다.",
                 });
               } else if (res.data == "Sign out succeeded") {
+                // if user's input PW correct, exit is proceed.
                 new Swal({
                   icon: "success",
                   title: "탈퇴되었습니다.",
@@ -121,6 +123,7 @@ function UserInfo(props) {
                   navigate("/");
                 });
               } else {
+                // if user's session invaild in backend, then print "invalid session"
                 new Swal({
                   icon: "warning",
                   title: "유효하지 않은 세션입니다.",
@@ -132,7 +135,7 @@ function UserInfo(props) {
     });
   };
 
-  // 비밀번호 변경 핸들러
+  // change password button click event
   const ChangedPwdButtonHandler = (event) => {
     new Swal({
       title: "비밀번호 변경",
@@ -167,21 +170,25 @@ function UserInfo(props) {
           })
           .then((res) => {
             if (res.data === "Password Updated") {
+              // if user's input PW correct, password change is proceed.
               new Swal({
                 icon: "success",
                 title: "비밀번호가 변경되었습니다!",
               });
             } else if (res.data == "Password Incorrect") {
+              // if user's input PW incorrect, password change doesn't proceed.
               new Swal({
                 icon: "error",
                 title: "현재 비밀번호와\n일치하지 않습니다.",
               });
             } else if (res.data === "New Password doesn't matches") {
+              // if user's input PW, confirm PW doesn't match, print "doesn't match!"
               new Swal({
                 icon: "error",
                 title: "새로운 비밀번호가 서로 \n일치하지 않습니다.",
               });
             } else {
+              // if user's session invaild in backend, then print "invalid session"
               new Swal({
                 icon: "warning",
                 title: "유효하지 않은 세션입니다.",

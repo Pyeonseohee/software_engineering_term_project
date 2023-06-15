@@ -1,23 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Navbar, Dropdown, Nav } from "react-bootstrap";
-import { BiUserCircle, BiCoffeeTogo } from "react-icons/bi";
+import { Navbar, Nav } from "react-bootstrap";
+import { BiCoffeeTogo } from "react-icons/bi";
 import "./mapPage.css";
 
 var session = "";
 const Narvar = (props) => {
   const navigate = useNavigate();
-  // 현재 route 정보
+  // current route information
   const location = useLocation().pathname;
-  var isLogin; // 로그인 했는지
+  var isLogin; // wheter user login or not
   session = props.user;
-  if (session == undefined) isLogin = false; // 세션이 undefined이면 로그인X
+  if (session == undefined) isLogin = false; // session check
   else isLogin = true;
   return (
     <Navbar className="topNarvar" variant="dark">
       <BiCoffeeTogo className="icon" size="40px" color="#C1EFFF"></BiCoffeeTogo>
       <Navbar.Brand href="/">Cafe</Navbar.Brand>
-      {isLogin ? (
+      {isLogin ? ( // user's session valid(login)
         <Nav className="me-auto">
           <Nav.Link
             onClick={() =>
@@ -55,6 +55,7 @@ const Narvar = (props) => {
           </Nav.Link>
         </Nav>
       ) : (
+        // user's session invalid(not login)
         <Nav className="me-auto">
           <Nav.Link href="/login" active={location == "/login" ? true : false}>
             로그인

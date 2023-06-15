@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dropdown, DropdownButton, Overlay, Popover } from "react-bootstrap";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { Dropdown, DropdownButton } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import { AiFillPlusCircle } from "react-icons/ai";
-import Narvar from "../MapPage/Narvar";
-import axios from "axios";
 
+import Narvar from "../MapPage/Narvar"; // common Narvar page(on the top of page)
+import axios from "axios"; // HTTP communication with spring
+
+// HTTP communication with spring Controller Route URL List
 const SetSeatURL = "http://localhost:8080/api/setseat";
 const SeatInfoURL = "http://localhost:8080/api/seatinfo";
 const SetStoreURL = "http://localhost:8080/api/setstore";
@@ -14,24 +16,22 @@ function SeatPage() {
   var test = "메가커피";
   const [userSession, setUserSession] = useState("");
   const ref = useRef(null);
-  const [storeName, setStoreName] = useState("매장을 선택하세요."); // 어떤 매장인지에 따라
+  const [storeName, setStoreName] = useState("매장을 선택하세요."); // depending on which store it is
   const [existStore, setExistStore] = useState(false);
-  const [isDragging, setIsDragging] = useState(false); // 드래깅 여부
-  const [draggingButton, setDraggingButton] = useState(null); // 드래깅 버튼
-  const [buttonCount, setButtonCount] = useState(1); // 버튼 몇 개 있는지
-  const [buttons, setButtons] = useState([]); // 버튼 list
+  const [isDragging, setIsDragging] = useState(false); // whether draggin or not
+  const [draggingButton, setDraggingButton] = useState(null); // dragging button
+  const [buttonCount, setButtonCount] = useState(1); // how many button
+  const [buttons, setButtons] = useState([]); // button list
 
-  // user session 받아오는 부분
-  // 저장했던 버튼의 위치정보 받아 다시 rendering
   const location = useLocation();
   const UserInfo = { ...location.state };
   useEffect(() => {
-    setUserSession(UserInfo.userSession);
+    setUserSession(UserInfo.userSession); // store user's session in variable
     confirmStore();
-    //fetchData();
+    fetchData();
   }, [storeName]);
 
-  // 매장 있는지 없는지 확인
+  // check if there is a store or not
   const confirmStore = () => {
     const data = {
       session: userSession,
@@ -46,7 +46,6 @@ function SeatPage() {
         if (res.data != null) {
           setExistStore(true);
           setStoreName(res.data.name);
-          console.log(res.data.name);
           fetchData();
         } else {
           console.log("------no store!!!");
@@ -54,7 +53,7 @@ function SeatPage() {
       });
   };
 
-  // 저장된 좌석 정보 받아오기
+  // get stored seat information
   const fetchData = () => {
     const data = {
       session: userSession,
@@ -71,13 +70,13 @@ function SeatPage() {
       });
   };
 
-  // 버튼을 드래그하여 옮길 때
+  // when drag the button to move
   const handleMouseDown = (event, buttonId) => {
     setIsDragging(true);
     setDraggingButton(buttonId);
   };
 
-  // 마우스 움직일 때
+  // when you move your mouse
   const handleMouseMove = (event) => {
     if (isDragging) {
       const updatedButtons = buttons.map((button) => {
@@ -94,13 +93,13 @@ function SeatPage() {
     }
   };
 
-  // drag하고 mouse 땔 때
+  // when we played drag and mouse
   const handleMouseUp = () => {
     setIsDragging(false);
     setDraggingButton(null);
   };
 
-  // 좌석 추가버튼
+  // add a seat button
   const handleAddButtonClick = () => {
     if (!isDragging) {
       const newButton = {
@@ -113,7 +112,7 @@ function SeatPage() {
     }
   };
 
-  // 두 번 누르면 좌석 삭제
+  // double-click to delete the seat
   const handleButtonDoubleClick = (buttonId) => {
     const data = {
       session: userSession,
@@ -147,7 +146,7 @@ function SeatPage() {
       });
   };
 
-  // 배치완료되면 데이터 seat의 데이터 보낼거임.
+  //  the data of the data sheet when the deployment is completed.
   const handleSendSeatInfo = (event, buttonId) => {
     console.log(buttonId, event.clientX, event.clientY);
     const data = {
@@ -167,7 +166,7 @@ function SeatPage() {
       });
   };
 
-  // 드롭다운에서 store정보 받아오는 부분
+  // where store information is received from the drop-down
   const StoreList = () => {
     const data = {
       session: userSession,
@@ -182,7 +181,7 @@ function SeatPage() {
       });
   };
 
-  // 드롭다운에서 store 이름 눌렀을 때 실행되는 함수.
+  // function that runs when the store name is pressed in the drop-down.
   const storeSelect = (storeName) => {
     console.log("-------", storeName);
     setStoreName(storeName);
